@@ -6,7 +6,7 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-public class GenerateMaze : MonoBehaviour
+public class MazeGenerator : MonoBehaviour
 {
 
     public Vector2 mazeSize = new Vector2(4, 6);
@@ -17,10 +17,6 @@ public class GenerateMaze : MonoBehaviour
     public GameObject end;
 
     private Levels levels;
-
-    public InputField mazeCode;
-    public InputField levelNumber;
-    public Text editorMessaging;
 
     const char NORTH = 'N';
     const char SOUTH = 'S';
@@ -35,21 +31,22 @@ public class GenerateMaze : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Load();
+        Load(1);
     }
 
-    public void Generate()
+    void ResetMaze()
     {
-        mazeCode.text = "";
-
         foreach (Transform child in transform)
         {
             GameObject.Destroy(child.gameObject);
         }
 
         gameObject.transform.position = new Vector3(0, 0, 0);
+    }
 
-        editorMessaging.text = "Generated a new maze";
+    public void Generate()
+    {
+        ResetMaze();
 
         _width = (int)mazeSize.x * 2 + 1;
         _height = (int)mazeSize.y * 2 + 1;
@@ -72,7 +69,7 @@ public class GenerateMaze : MonoBehaviour
         }
 
         _maze[(int)mazeStart.x, (int)mazeStart.y] = 2;
-        _maze[UnityEngine.Random.Range(1, _width-1), _height-1] = 3;
+        _maze[UnityEngine.Random.Range(1, _width - 1), _height - 1] = 3;
     }
 
     void CreateData()
@@ -88,7 +85,6 @@ public class GenerateMaze : MonoBehaviour
         while (_moves.Count > 0)
         {
             possibleDirections = "";
-
 
             if ((pos.y + 2 < _height) && (_maze[(int)pos.x, (int)pos.y + 2] == 1) && (pos.y + 2 != 0) && (pos.y + 2 != _height - 1))
             {
@@ -161,17 +157,13 @@ public class GenerateMaze : MonoBehaviour
 
     private void DrawMaze()
     {
-        editorMessaging.text = "Drawing maze...";
-
-        mazeCode.text = "";
         for (int y = 0; y < _height; y++)
         {
             for (int x = 0; x < _width; x++)
             {
-                mazeCode.text += _maze[x, y];
 
                 GameObject t;
-                if(_maze[x, y] == 1)
+                if (_maze[x, y] == 1)
                 {
                     t = (GameObject)Instantiate(wall, new Vector3(x * tileSize, y * tileSize), Quaternion.identity);
                     t.transform.parent = gameObject.transform;
@@ -186,76 +178,14 @@ public class GenerateMaze : MonoBehaviour
                     t = (GameObject)Instantiate(end, new Vector3(x * tileSize, y * tileSize), Quaternion.identity);
                     t.transform.parent = gameObject.transform;
                 }
-                
+
             }
         }
 
         gameObject.transform.position = new Vector3(-_width * tileSize / 2, -_height * tileSize / 2);
-
-        editorMessaging.text = "Maze drawn!";
     }
 
-    public void Save()
-    {
-        if(mazeCode.text == "")
-        {
-            editorMessaging.text = "Maze code field empty";
-            return;
-        }
-
-        if (levelNumber.text == "" || levelNumber.text == "0")
-        {
-            editorMessaging.text = "Level number field invalid";
-            return;
-        }
-
-        FileMode fileMode;
-        if (File.Exists(Application.persistentDataPath + "/levels.dat"))
-        {
-            fileMode = FileMode.Open;
-            editorMessaging.text = "Opening levels.dat for saving";
-        }
-        else
-        {
-            fileMode = FileMode.Create;
-            levels = new Levels();
-            editorMessaging.text = "levels.dat file not created, creating one";
-        }
-
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Open(Application.persistentDataPath + "/levels.dat", fileMode);
-
-        LevelData level;
-
-        if(levels.levels.Count == int.Parse(levelNumber.text))
-        {
-            level = levels.levels[int.Parse(levelNumber.text) - 1];
-            if (level == null)
-            {
-                level = new LevelData();
-                levels.levels.Add(level);
-            }
-        }
-        else
-        {
-            level = new LevelData();
-            levels.levels.Add(level);
-        }
-
-        level.data = mazeCode.text;
-        level.level = levelNumber.text;
-        level.width = mazeSize.x.ToString();
-        level.height = mazeSize.y.ToString();
-
-        Debug.Log("Saving: " + level.data + "  level.width " + level.width + " level.height " + level.height);
-
-        bf.Serialize(file, levels);
-        file.Close();
-
-        editorMessaging.text = "levels.dat saved";
-    }
-
-    public void Load()
+    public void Load(int levelNumber)
     {
         if (File.Exists(Application.persistentDataPath + "/levels.dat"))
         {
@@ -264,48 +194,31 @@ public class GenerateMaze : MonoBehaviour
             levels = (Levels)bf.Deserialize(file);
             file.Close();
 
-            editorMessaging.text = "Opening levels.dat for loading level data";
-
-            LevelData level = levels.levels[int.Parse(levelNumber.text) - 1];
-            if(level != null)
+            LevelData level = levels.levels[levelNumber - 1];
+            if (level != null)
             {
-                editorMessaging.text = "Level exists, parsing level data";
                 Parse(level);
             }
             else
             {
-                editorMessaging.text = "Level does not exist, generate a new level";
                 Generate();
             }
-            
+
         }
         else
         {
-            editorMessaging.text = "levels.dat file does not exist, generate a new level";
             Generate();
         }
     }
 
     void Parse(LevelData level)
     {
-        mazeCode.text = level.data;
-        levelNumber.text = level.level;
-
-        gameObject.transform.position = new Vector3(0, 0, 0);
-
-        foreach (Transform child in transform)
-        {
-            GameObject.Destroy(child.gameObject);
-        }
-
-        Debug.Log("Parsing: " + level.data);
+        ResetMaze();
 
         mazeSize = new Vector2(int.Parse(level.width), int.Parse(level.height));
 
         _width = (int)mazeSize.x * 2 + 1;
         _height = (int)mazeSize.y * 2 + 1;
-
-        Debug.Log("Parsing: _width " +  _width + " _height " + _height);
 
         _maze = new int[_width, _height];
 
@@ -326,20 +239,4 @@ public class GenerateMaze : MonoBehaviour
         DrawMaze();
     }
 
-}
-
-[Serializable]
-class LevelData
-{
-    public string data;
-    public string level;
-    public string width;
-    public string height;
-}
-
-[Serializable]
-class Levels
-{
-    [SerializeField]
-    public List<LevelData> levels = new List<LevelData>();
 }
