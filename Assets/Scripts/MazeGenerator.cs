@@ -16,32 +16,35 @@ public class MazeGenerator : MonoBehaviour
     public GameObject start;
     public GameObject end;
 
-    private Levels levels;
+    public Levels levels;
 
-    const char NORTH = 'N';
-    const char SOUTH = 'S';
-    const char EAST = 'E';
-    const char WEST = 'W';
+    public string mazeCode;
+    public int mazeID = 1;
 
-    int[,] _maze;
-    List<int> _moves;
-    int _width;
-    int _height;
+    protected const char NORTH = 'N';
+    protected const char SOUTH = 'S';
+    protected const char EAST = 'E';
+    protected const char WEST = 'W';
+
+    protected int[,] _maze;
+    protected List<int> _moves;
+    protected int _width;
+    protected int _height;
 
     // Use this for initialization
     void Start()
     {
-        Load(1);
+        Load(mazeID);
     }
 
-    void ResetMaze()
+    protected void ResetMaze()
     {
-        foreach (Transform child in transform)
-        {
-            GameObject.Destroy(child.gameObject);
-        }
+        mazeCode = "";
 
-        gameObject.transform.position = new Vector3(0, 0, 0);
+        while (transform.childCount != 0)
+        {
+            DestroyImmediate(transform.GetChild(0).gameObject);
+        }
     }
 
     public void Generate()
@@ -155,34 +158,33 @@ public class MazeGenerator : MonoBehaviour
         }
     }
 
-    private void DrawMaze()
+    protected void DrawMaze()
     {
         for (int y = 0; y < _height; y++)
         {
             for (int x = 0; x < _width; x++)
             {
+                mazeCode += _maze[x, y];
 
                 GameObject t;
                 if (_maze[x, y] == 1)
                 {
-                    t = (GameObject)Instantiate(wall, new Vector3(x * tileSize, y * tileSize), Quaternion.identity);
+                    t = (GameObject)Instantiate(wall, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
                     t.transform.parent = gameObject.transform;
                 }
                 else if (_maze[x, y] == 2)
                 {
-                    t = (GameObject)Instantiate(start, new Vector3(x * tileSize, y * tileSize), Quaternion.identity);
+                    t = (GameObject)Instantiate(start, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
                     t.transform.parent = gameObject.transform;
                 }
                 else if (_maze[x, y] == 3)
                 {
-                    t = (GameObject)Instantiate(end, new Vector3(x * tileSize, y * tileSize), Quaternion.identity);
+                    t = (GameObject)Instantiate(end, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
                     t.transform.parent = gameObject.transform;
                 }
 
             }
         }
-
-        gameObject.transform.position = new Vector3(-_width * tileSize / 2, -_height * tileSize / 2);
     }
 
     public void Load(int levelNumber)
@@ -239,4 +241,21 @@ public class MazeGenerator : MonoBehaviour
         DrawMaze();
     }
 
+}
+
+
+[Serializable]
+public class LevelData
+{
+    public string data;
+    public string level;
+    public string width;
+    public string height;
+}
+
+[Serializable]
+public class Levels
+{
+    [SerializeField]
+    public List<LevelData> levels = new List<LevelData>();
 }
