@@ -15,6 +15,12 @@ public class MazeGenerator : MonoBehaviour
     public GameObject wall;
     public GameObject start;
     public GameObject end;
+    public GameObject glowFloor;
+
+    [HideInInspector]
+    public List<GameObject> glowTiles;
+    [HideInInspector]
+    public GameObject player;
 
     public Levels levels;
 
@@ -45,6 +51,8 @@ public class MazeGenerator : MonoBehaviour
         {
             DestroyImmediate(transform.GetChild(0).gameObject);
         }
+
+        glowTiles = new List<GameObject>();
     }
 
     public void Generate()
@@ -62,6 +70,7 @@ public class MazeGenerator : MonoBehaviour
     void InitData()
     {
         _maze = new int[_width, _height];
+        glowTiles = new List<GameObject>();
 
         for (int y = 0; y < _height; y++)
         {
@@ -160,22 +169,35 @@ public class MazeGenerator : MonoBehaviour
 
     protected void DrawMaze()
     {
+        GameObject w = null;
+        float tileWidth = 0;
+
         for (int y = 0; y < _height; y++)
         {
+            w = null;
+            tileWidth = 0;
+
             for (int x = 0; x < _width; x++)
             {
                 mazeCode += _maze[x, y];
 
                 GameObject t;
-                if (_maze[x, y] == 1)
+                if (_maze[x, y] == 1 && !w)
                 {
-                    t = (GameObject)Instantiate(wall, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
-                    t.transform.parent = gameObject.transform;
+                    w = (GameObject)Instantiate(wall, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+                    w.transform.parent = gameObject.transform;
+                    tileWidth = tileSize;
+                }
+                else if (_maze[x, y] == 1 && w)
+                {
+                    tileWidth += tileSize;
+                    w.transform.position = new Vector3(x * tileSize - (tileWidth - tileSize) / 2f, 0, y * tileSize);
+                    w.transform.localScale = new Vector3(tileWidth, tileSize, tileSize);
                 }
                 else if (_maze[x, y] == 2)
                 {
-                    t = (GameObject)Instantiate(start, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
-                    t.transform.parent = gameObject.transform;
+                    player = (GameObject)Instantiate(start, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+                    player.transform.parent = gameObject.transform;
                 }
                 else if (_maze[x, y] == 3)
                 {
@@ -183,6 +205,16 @@ public class MazeGenerator : MonoBehaviour
                     t.transform.parent = gameObject.transform;
                 }
 
+                if(_maze[x, y] != 1)
+                {
+                    w = null;
+
+                    t = (GameObject)Instantiate(glowFloor, new Vector3(x * tileSize, -tileSize / 2f, y * tileSize), Quaternion.identity);
+                    t.transform.parent = gameObject.transform;
+                    t.GetComponent<Renderer>().enabled = false;
+                    glowTiles.Add(t);
+
+                }
             }
         }
     }
