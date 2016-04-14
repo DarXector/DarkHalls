@@ -27,7 +27,7 @@ public class BreadingLight : MonoBehaviour {
             return;
         }
 
-        _light.intensity = 7f + 2f * Mathf.Sin(Time.time * speed);
+        _light.intensity = 6f + 1f * Mathf.Sin(Time.time * speed);
         _halo.range = 0.29f + 0.03f * Mathf.Sin(Time.time * speed);
     }
 }

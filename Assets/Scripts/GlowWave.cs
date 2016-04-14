@@ -43,11 +43,8 @@ public class GlowWave : MonoBehaviour {
                 var distance = Vector3.Distance(_maze.player.transform.position, tile.transform.position);
                 if(distance < _currentScanRadius + waveWidth / 2 && distance > _currentScanRadius - waveWidth / 2)
                 {
-                    tile.GetComponent<Renderer>().enabled = true;
-                }
-                else
-                {
-                    tile.GetComponent<Renderer>().enabled = false;
+                    //tile.GetComponent<Renderer>().enabled = true;
+                    tile.GetComponent<FadeInOut>().FadeIn();
                 }
             }
         }

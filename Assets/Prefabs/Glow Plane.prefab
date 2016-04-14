@@ -11,6 +11,7 @@ GameObject:
   - 33: {fileID: 3379310}
   - 64: {fileID: 6470618}
   - 23: {fileID: 2350248}
+  - 114: {fileID: 11454136}
   m_Layer: 8
   m_Name: Glow Plane
   m_TagString: Untagged
@@ -75,6 +76,22 @@ MeshCollider:
   serializedVersion: 2
   m_Convex: 0
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &11454136
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 196496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afd74f9705bc7ca4bb10c92ef2d4c195, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeDelay: 0
+  fadeTime: 0.05
+  fadeoutDelay: 0.3
+  fadeInOnStart: 0
+  fadeOutOnStart: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

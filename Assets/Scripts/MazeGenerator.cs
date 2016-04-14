@@ -16,6 +16,11 @@ public class MazeGenerator : MonoBehaviour
     public GameObject start;
     public GameObject end;
     public GameObject glowFloor;
+    public GameObject navigationNodes;
+    public GameObject navigationNode;
+
+    protected AstarPath _astar;
+    public GameObject AStarObject; 
 
     [HideInInspector]
     public List<GameObject> glowTiles;
@@ -40,6 +45,8 @@ public class MazeGenerator : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        _astar = AStarObject.GetComponent<AstarPath>();
+
         Load(mazeID);
     }
 
@@ -50,6 +57,11 @@ public class MazeGenerator : MonoBehaviour
         while (transform.childCount != 0)
         {
             DestroyImmediate(transform.GetChild(0).gameObject);
+        }
+
+        while (navigationNodes.transform.childCount != 0)
+        {
+            DestroyImmediate(navigationNodes.transform.GetChild(0).gameObject);
         }
 
         glowTiles = new List<GameObject>();
@@ -211,11 +223,19 @@ public class MazeGenerator : MonoBehaviour
 
                     t = (GameObject)Instantiate(glowFloor, new Vector3(x * tileSize, -tileSize / 2f, y * tileSize), Quaternion.identity);
                     t.transform.parent = gameObject.transform;
-                    t.GetComponent<Renderer>().enabled = false;
+                    //t.GetComponent<Renderer>().enabled = false;
                     glowTiles.Add(t);
+
+                    var n = (GameObject)Instantiate(navigationNode, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+                    n.transform.parent = navigationNodes.transform;
 
                 }
             }
+        }
+
+        if(_astar)
+        {
+            _astar.Scan();
         }
     }
 
