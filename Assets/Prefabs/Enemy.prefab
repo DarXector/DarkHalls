@@ -12,7 +12,7 @@ GameObject:
   - 23: {fileID: 2376526}
   - 143: {fileID: 14351280}
   - 114: {fileID: 11459434}
-  - 114: {fileID: 11403808}
+  - 114: {fileID: 11481142}
   m_Layer: 2
   m_Name: Enemy
   m_TagString: Untagged
@@ -65,28 +65,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 118476}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &11403808
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 118476}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5ac18cdd242041b6bebc0e95b624c85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  repathRate: 0.5
-  target: {fileID: 0}
-  canSearch: 1
-  canMove: 1
-  speed: 1
-  turningSpeed: 4
-  slowdownDistance: 0.2
-  pickNextWaypointDist: 0.5
-  forwardLook: 0.8
-  endReachedDistance: 0.05
-  closestOnPathCheck: 1
 --- !u!114 &11459434
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -114,6 +92,32 @@ MonoBehaviour:
     tagsChange: -1
     tagsSet: -1
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+--- !u!114 &11481142
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 118476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 926b882ffd9f5264dae42baf11abc776, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  repathRate: 0.5
+  target: {fileID: 0}
+  canSearch: 1
+  canMove: 1
+  speed: 1
+  turningSpeed: 4
+  slowdownDistance: 0.2
+  pickNextWaypointDist: 0.5
+  forwardLook: 1
+  endReachedDistance: 0.05
+  closestOnPathCheck: 1
+  playerInSight: 0
+  normalSpeed: 0.5
+  chaseSpeed: 1
+  playerChaseDistance: 1.5
 --- !u!143 &14351280
 CharacterController:
   m_ObjectHideFlags: 1

@@ -12,20 +12,21 @@ public class MazeGenerator : MonoBehaviour
     public Vector2 mazeSize = new Vector2(4, 6);
     public Vector2 mazeStart = new Vector2(0, 1);
     public float tileSize = 0.5f;
-    public GameObject wall;
-    public GameObject start;
-    public GameObject end;
-    public GameObject glowFloor;
+    public GameObject wallPrefab;
+    public GameObject playerPrefab;
+    public GameObject endPrefab;
+    public GameObject glowFloorPrefab;
+    public GameObject enemyPrefab;
     public GameObject navigationNodes;
     public GameObject navigationNode;
-
-    protected AstarPath _astar;
-    public GameObject AStarObject; 
 
     [HideInInspector]
     public List<GameObject> glowTiles;
     [HideInInspector]
     public GameObject player;
+    [HideInInspector]
+    public GameObject enemy;
+
 
     public Levels levels;
 
@@ -42,11 +43,13 @@ public class MazeGenerator : MonoBehaviour
     protected int _width;
     protected int _height;
 
+    // Event Handler
+    public delegate void OnDrawCompleteEvent();
+    public event OnDrawCompleteEvent OnDrawComplete;
+
     // Use this for initialization
     void Start()
     {
-        _astar = AStarObject.GetComponent<AstarPath>();
-
         Load(mazeID);
     }
 
@@ -193,50 +196,84 @@ public class MazeGenerator : MonoBehaviour
             {
                 mazeCode += _maze[x, y];
 
-                GameObject t;
-                if (_maze[x, y] == 1 && !w)
+                switch(_maze[x,y])
                 {
-                    w = (GameObject)Instantiate(wall, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
-                    w.transform.parent = gameObject.transform;
-                    tileWidth = tileSize;
-                }
-                else if (_maze[x, y] == 1 && w)
-                {
-                    tileWidth += tileSize;
-                    w.transform.position = new Vector3(x * tileSize - (tileWidth - tileSize) / 2f, 0, y * tileSize);
-                    w.transform.localScale = new Vector3(tileWidth, tileSize, tileSize);
-                }
-                else if (_maze[x, y] == 2)
-                {
-                    player = (GameObject)Instantiate(start, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
-                    player.transform.parent = gameObject.transform;
-                }
-                else if (_maze[x, y] == 3)
-                {
-                    t = (GameObject)Instantiate(end, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
-                    t.transform.parent = gameObject.transform;
+                    case 1:
+                        tileWidth = SpawnWall(x, y, w, tileWidth);
+                        break;
+                    case 2:
+                        SpawnPlayer(x, y);
+                        break;
+                    case 3:
+                        SpawnEnd(x, y);
+                        break;
                 }
 
                 if(_maze[x, y] != 1)
                 {
                     w = null;
-
-                    t = (GameObject)Instantiate(glowFloor, new Vector3(x * tileSize, -tileSize / 2f, y * tileSize), Quaternion.identity);
-                    t.transform.parent = gameObject.transform;
-                    //t.GetComponent<Renderer>().enabled = false;
-                    glowTiles.Add(t);
-
-                    var n = (GameObject)Instantiate(navigationNode, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
-                    n.transform.parent = navigationNodes.transform;
-
+                    SpawnCorridor(x, y);
                 }
             }
         }
 
-        if(_astar)
+        SpawnEnemy();
+
+        OnDrawComplete();
+    }
+
+    private void SpawnCorridor(int x, int y)
+    {
+        var t = (GameObject)Instantiate(glowFloorPrefab, new Vector3(x * tileSize, -tileSize / 2f, y * tileSize), Quaternion.identity);
+        t.transform.parent = gameObject.transform;
+        t.GetComponent<Renderer>().enabled = false;
+        glowTiles.Add(t);
+
+        var n = (GameObject)Instantiate(navigationNode, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+        n.transform.parent = navigationNodes.transform;
+    }
+
+    private void SpawnEnd(int x, int y)
+    {
+        var t = (GameObject)Instantiate(endPrefab, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+        t.transform.parent = gameObject.transform;
+    }
+
+    private void SpawnPlayer(int x, int y)
+    {
+        player = (GameObject)Instantiate(playerPrefab, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+        player.transform.parent = gameObject.transform;
+    }
+
+    float SpawnWall(int x, int y, GameObject w, float tileWidth)
+    {
+        if (!w)
         {
-            _astar.Scan();
+            w = (GameObject)Instantiate(wallPrefab, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+            w.transform.parent = gameObject.transform;
+            tileWidth = tileSize;
         }
+        else if (w)
+        {
+            tileWidth += tileSize;
+            w.transform.position = new Vector3(x * tileSize - (tileWidth - tileSize) / 2f, 0, y * tileSize);
+            w.transform.localScale = new Vector3(tileWidth, tileSize, tileSize);
+        }
+
+        return tileWidth;
+    }
+
+    void SpawnEnemy()
+    {
+        var position = GetRandomNode().position;
+        enemy = (GameObject)Instantiate(enemyPrefab, new Vector3(position.x, position.y, position.z), Quaternion.identity);
+        enemy.transform.parent = gameObject.transform;
+        GameManager.gm.enemy = enemy;
+    }
+
+    public Transform GetRandomNode()
+    {
+        return navigationNodes.transform.GetChild(UnityEngine.Random.Range(0, navigationNodes.transform.childCount)).transform;
     }
 
     public void Load(int levelNumber)
