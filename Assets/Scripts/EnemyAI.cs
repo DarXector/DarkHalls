@@ -11,15 +11,22 @@ public class EnemyAI : AIPath
 
     public float normalSpeed = 1f;
     public float chaseSpeed = 2f;
-    public float playerChaseDistance = 2f;
+    public float showDistance = 2f;
+    public float chaseDistance = 1.5f;
 
     private GameObject player;
+    private ShowHideEffect effect;
 
     public new void Start()
     {
         target = GameManager.gm.GetWaypoint();
 
         player = GameObject.FindGameObjectWithTag("Player");
+        effect = gameObject.transform.GetChild(0).gameObject.GetComponent<ShowHideEffect>();
+        if(effect)
+        {
+            effect.Hide();
+        }
 
         speed = normalSpeed;
 
@@ -38,38 +45,51 @@ public class EnemyAI : AIPath
 
     protected new void Update()
     {
+        if(!effect || !player)
+        {
+            return;
+        }
+
         RaycastHit hit;
         // Create a vector from the enemy to the player and store the angle between it and forward.
         Vector3 direction = player.transform.position - transform.position;
+        float distance = Mathf.Abs(Vector3.Distance(player.transform.position, transform.position));
 
         // ... and if a raycast towards the player hits something...
-        if (Physics.Raycast(transform.position, direction.normalized, out hit, playerChaseDistance))
+        if (Physics.Raycast(transform.position, direction.normalized, out hit, showDistance))
         {
-            Debug.Log("Raycast hit: " + hit.collider.gameObject.name);
+            //Debug.Log("Raycast hit: " + hit.collider.gameObject.name);
             // ... and if the raycast hits the player...
+
             if (hit.collider.gameObject == player)
             {
-                // ... the player is in sight.
-                playerInSight = true;
+                effect.Show();
 
-                speed = chaseSpeed;
+                if (distance < chaseDistance)
+                {
+                    // ... the player is in sight.
+                    playerInSight = true;
+                    speed = chaseSpeed;
+                    target = player.transform;
 
-                target = player.transform;
+                    base.Update();
+                    return;
+                }
             }
-            else if (playerInSight)
+            else
             {
-                speed = normalSpeed;
-                playerInSight = false;
-                target = GameManager.gm.GetWaypoint();
+                effect.Hide();
             }
         }
-        else if (playerInSight)
+        else
         {
-            speed = normalSpeed;
-            playerInSight = false;
-            target = GameManager.gm.GetWaypoint();
+            effect.Hide();
         }
 
+
+        speed = normalSpeed;
+        playerInSight = false;
+        target = GameManager.gm.GetWaypoint();
 
         base.Update();
     }
