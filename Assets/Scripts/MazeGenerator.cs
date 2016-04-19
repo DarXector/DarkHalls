@@ -29,6 +29,7 @@ public class MazeGenerator : MonoBehaviour
 
 
     public Levels levels;
+    public FileStream file;
 
     public string mazeCode;
     public int mazeID = 1;
@@ -216,10 +217,12 @@ public class MazeGenerator : MonoBehaviour
                 }
             }
         }
-
-        SpawnEnemy();
-
-        OnDrawComplete();
+       
+        if (!Application.isEditor)
+        {
+            SpawnEnemy();
+            OnDrawComplete();
+        }   
     }
 
     private void SpawnCorridor(int x, int y)
@@ -281,7 +284,7 @@ public class MazeGenerator : MonoBehaviour
         if (File.Exists(Application.persistentDataPath + "/levels.dat"))
         {
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + "/levels.dat", FileMode.Open);
+            file = File.Open(Application.persistentDataPath + "/levels.dat", FileMode.Open);
             levels = (Levels)bf.Deserialize(file);
             file.Close();
 

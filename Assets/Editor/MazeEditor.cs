@@ -42,53 +42,49 @@ public class MazeEditor : Editor { // extend the Editor class
 
     public void Save()
     {
+        Debug.Log("Save _mazeGenarator.mazeID " + _mazeGenarator.mazeID);
+        Debug.Log("Save _mazeGenarator.mazeCode " + _mazeGenarator.mazeCode);
+
         if (_mazeGenarator.mazeCode == "")
         {
             return;
         }
 
-        if (_mazeGenarator.mazeID > 0)
+        if (_mazeGenarator.mazeID <= 0)
         {
             return;
         }
 
-        FileMode fileMode;
-
-
-        if (File.Exists(Application.persistentDataPath + "/levels.dat"))
-        {
-            fileMode = FileMode.Open;
-        }
-        else
-        {
-            fileMode = FileMode.Create;
+        if (_mazeGenarator.levels == null)
+        { 
             _mazeGenarator.levels = new Levels();
         }
 
         BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Open(Application.persistentDataPath + "/levels.dat", fileMode);
-
+        FileStream file = File.Open(Application.persistentDataPath + "/levels.dat", FileMode.Create);
+        Levels levels = _mazeGenarator.levels;
         LevelData level;
 
-        if (_mazeGenarator.levels.levels.Count == _mazeGenarator.mazeID)
+        Debug.Log("Save levels.levels.Count " + levels.levels.Count);
+
+        if (levels.levels.Count > _mazeGenarator.mazeID)
         {
-            level = _mazeGenarator.levels.levels[_mazeGenarator.mazeID - 1];
-            if (level == null)
-            {
-                level = new LevelData();
-                _mazeGenarator.levels.levels.Add(level);
-            }
+            level = levels.levels[_mazeGenarator.mazeID - 1];
+            Debug.Log("Save level exists " + level);
         }
         else
         {
             level = new LevelData();
-            _mazeGenarator.levels.levels.Add(level);
+            levels.levels.Add(level);
+            Debug.Log("Save level does not exist " + level);
         }
 
         level.data = _mazeGenarator.mazeCode;
         level.level = _mazeGenarator.mazeID.ToString();
         level.width = _mazeGenarator.mazeSize.x.ToString();
         level.height = _mazeGenarator.mazeSize.y.ToString();
+
+        Debug.Log("Save level " + levels.levels[_mazeGenarator.mazeID - 1].data);
 
         bf.Serialize(file, _mazeGenarator.levels);
         file.Close();
