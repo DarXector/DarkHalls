@@ -126,7 +126,7 @@ public class GameManager : MonoBehaviour {
         if(enemy)
         {
             _enemyAI = enemy.GetComponent<EnemyAI>();
-            _enemyAI.OnTargetReach += OnAITargetReached;
+            _enemyAI.OnPlayerCought += OnPlayerCought;
         }
         else
         {
@@ -134,12 +134,9 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    void OnAITargetReached(GameObject target)
+    void OnPlayerCought()
     {
-        if(target.tag == "Player")
-        {
-
-        }
+        ResetGame();
     }
 
     public Transform GetWaypoint()
@@ -168,23 +165,6 @@ public class GameManager : MonoBehaviour {
         UITime.text = "Time: " + time.ToString();
         UIBestTime.text = "Best Time: " + bestTime.ToString();
 		UILevel.text = SceneManager.GetActiveScene().name;
-	}
-
-	// public function to add points and update the gui and highscore player prefs accordingly
-	public void AddPoints(int amount)
-	{
-		// increase score
-		time += amount;
-
-		// update UI
-		UITime.text = "Score: "+time.ToString();
-
-		// if score>highscore then update the highscore UI too
-		if (time > bestTime)
-        {
-			bestTime = time;
-            UIBestTime.text = "Highscore: " + time.ToString();
-		}
 	}
 
     // public function to remove player life and reset game accordingly

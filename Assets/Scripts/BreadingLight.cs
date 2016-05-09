@@ -7,6 +7,8 @@ public class BreadingLight : MonoBehaviour {
     Light _halo;
 
     public float speed = 2f;
+    public float baseIntensity = 6f;
+    public float baseRange = 0.3f;
 
     // Use this for initialization
     void Start () {
@@ -27,7 +29,7 @@ public class BreadingLight : MonoBehaviour {
             return;
         }
 
-        _light.intensity = 6f + 1f * Mathf.Sin(Time.time * speed);
-        _halo.range = 0.29f + 0.03f * Mathf.Sin(Time.time * speed);
+        _light.intensity = baseIntensity + 1f * Mathf.Sin(Time.time * speed);
+        _halo.range = baseRange + 0.03f * Mathf.Sin(Time.time * speed);
     }
 }

@@ -217,12 +217,10 @@ public class MazeGenerator : MonoBehaviour
                 }
             }
         }
-       
-        if (!Application.isEditor)
-        {
-            SpawnEnemy();
-            OnDrawComplete();
-        }   
+
+        SpawnEnemy();
+
+        OnDrawComplete();
     }
 
     private void SpawnCorridor(int x, int y)

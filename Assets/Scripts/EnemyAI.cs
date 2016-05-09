@@ -4,8 +4,8 @@ using System.Collections;
 [RequireComponent(typeof(Seeker))]
 public class EnemyAI : AIPath
 {
-    public delegate void OnTargetReachedEvent(GameObject g);
-    public event OnTargetReachedEvent OnTargetReach;
+    public delegate void OnTargetReachedEvent();
+    public event OnTargetReachedEvent OnPlayerCought;
 
     public bool playerInSight;
 
@@ -15,18 +15,12 @@ public class EnemyAI : AIPath
     public float chaseDistance = 1.5f;
 
     private GameObject player;
-    private ShowHideEffect effect;
 
     public new void Start()
     {
         target = GameManager.gm.GetWaypoint();
 
         player = GameObject.FindGameObjectWithTag("Player");
-        effect = gameObject.transform.GetChild(0).gameObject.GetComponent<ShowHideEffect>();
-        if(effect)
-        {
-            effect.Hide();
-        }
 
         speed = normalSpeed;
 
@@ -35,17 +29,23 @@ public class EnemyAI : AIPath
 
     public override void OnTargetReached()
     {
-        OnTargetReach(target.gameObject);
-
         if (target.tag != "Player")
         {
             target = GameManager.gm.GetWaypoint();
         }
     }
 
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if(hit.collider.tag == "Player")
+        {
+            OnPlayerCought();
+        }
+    }
+
     protected new void Update()
     {
-        if(!effect || !player)
+        if(!player)
         {
             return;
         }
@@ -53,45 +53,39 @@ public class EnemyAI : AIPath
         RaycastHit hit;
         // Create a vector from the enemy to the player and store the angle between it and forward.
         Vector3 direction = player.transform.position - transform.position;
-        float distance = Mathf.Abs(Vector3.Distance(player.transform.position, transform.position));
 
-        if (distance < showDistance)
-        {
-            effect.Show();
-        }
-        else
-        {
-            effect.Hide();
-        }
 
         // ... and if a raycast towards the player hits something...
-        if (Physics.Raycast(transform.position, direction.normalized, out hit, chaseDistance))
+        if (Physics.Raycast(transform.position, direction.normalized, out hit, chaseDistance) && hit.collider.gameObject == player)
         {
-            //Debug.Log("Raycast hit: " + hit.collider.gameObject.name);
-            // ... and if the raycast hits the player...
-
-            if (hit.collider.gameObject == player)
+            if (!playerInSight)
             {
-                if(!playerInSight)
-                {
-                    playerInSight = true;
-                    speed = chaseSpeed;
-                    target = player.transform;
-                }
-
-                base.Update();
-                return;
+                Debug.Log("Seen player");
+                playerInSight = true;
+                speed = chaseSpeed;
             }
+
+            Debug.Log("Chasing player");
+            target = player.transform;
+
+            base.Update();
+            return;
         }
 
-        if(playerInSight)
+        if (playerInSight)
         {
+            Debug.Log("Lost sight of player");
             speed = normalSpeed;
             playerInSight = false;
-            target = GameManager.gm.GetWaypoint();
+            GetNewWaypoint();
         }
         
 
         base.Update();
+    }
+
+    void GetNewWaypoint()
+    {
+        target = GameManager.gm.GetWaypoint();
     }
 }
