@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &177076
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 424772}
+  - 114: {fileID: 11464458}
+  m_Layer: 0
+  m_Name: GameModel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &424772
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 177076}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.7453113, y: -44.28363, z: 39.272007}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+--- !u!114 &11464458
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 177076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 815d8fb0dcbcf84448e86ab6e4f1a370, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levels:
+    levels:
+    - data: 1111111111111100002100000110111111101011010001000101101010101110110001000100011111111110111100000001010110111011101011010101000101101010101110110001000000011131111111111
+      level: 1
+      width: 6
+      height: 6
+    - data: 1111111111111100012000000111101111111011000100010001101110101011110100010101011010111010101101010101000110101010111011010101000001101010111111110000000000011111111111311
+      level: 2
+      width: 6
+      height: 6
+    - data: 1111111111111100012000010110101111101011010001010101111010101010110001010101011011101010101101000001010110111111101011000000010101101111101010110000010000011113111111111
+      level: 2
+      width: 6
+      height: 6
+    - data: 1111111111111101002100000110101111101011010000000101101111111110110000000100011110111110111100010001000110111010111011010001000101101011111010110000000100011111111311111
+      level: 3
+      width: 6
+      height: 6
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 177076}
+  m_IsPrefabParent: 1

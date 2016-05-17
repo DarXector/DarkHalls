@@ -27,10 +27,6 @@ public class MazeGenerator : MonoBehaviour
     [HideInInspector]
     public GameObject enemy;
 
-
-    public Levels levels;
-    public FileStream file;
-
     public string mazeCode;
     public int mazeID = 1;
 
@@ -51,7 +47,8 @@ public class MazeGenerator : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Load(mazeID);
+        GameModel.Instance.OnLevelLoaded += Parse;
+        GameModel.Instance.Load(mazeID);
     }
 
     protected void ResetMaze()
@@ -277,34 +274,10 @@ public class MazeGenerator : MonoBehaviour
         return navigationNodes.transform.GetChild(UnityEngine.Random.Range(0, navigationNodes.transform.childCount)).transform;
     }
 
-    public void Load(int levelNumber)
+    public void Parse(LevelData level)
     {
-        if (File.Exists(Application.persistentDataPath + "/levels.dat"))
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            file = File.Open(Application.persistentDataPath + "/levels.dat", FileMode.Open);
-            levels = (Levels)bf.Deserialize(file);
-            file.Close();
+        Debug.Log("Parse " + level);
 
-            LevelData level = levels.levels[levelNumber - 1];
-            if (level != null)
-            {
-                Parse(level);
-            }
-            else
-            {
-                Generate();
-            }
-
-        }
-        else
-        {
-            Generate();
-        }
-    }
-
-    void Parse(LevelData level)
-    {
         ResetMaze();
 
         mazeSize = new Vector2(int.Parse(level.width), int.Parse(level.height));
@@ -330,22 +303,4 @@ public class MazeGenerator : MonoBehaviour
 
         DrawMaze();
     }
-
-}
-
-
-[Serializable]
-public class LevelData
-{
-    public string data;
-    public string level;
-    public string width;
-    public string height;
-}
-
-[Serializable]
-public class Levels
-{
-    [SerializeField]
-    public List<LevelData> levels = new List<LevelData>();
 }
