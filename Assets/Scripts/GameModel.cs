@@ -9,30 +9,29 @@ public class GameModel : Singleton<GameModel>
 {
     protected GameModel() { } // guarantee this will be always a singleton only - can't use the constructor!
 
-    public Levels levels = new Levels();
-    public FileStream file;
+    public Levels levelsData = new Levels();
     internal LevelData currentLevel;
 
     public delegate void OnLevelLoadedEvent(LevelData level);
     public event OnLevelLoadedEvent OnLevelLoaded;
 
-    public void Awake()
+    public bool navigated = false;
+    private int _currentLevelIndex;
+
+    public void Start()
     {
+        levelsData = new Levels();
+
         Load(0);
-        currentLevel = levels.levels[0];
+        currentLevel = levelsData.levels[0];
     }
 
-    public void Save(int mazeID, string mazeCode, Vector2 mazeSize)
+    public void Save(int index, string mazeCode, Vector2 mazeSize, bool hasEnemy)
     {
-        Debug.Log("Save mazeID " + mazeID);
+        Debug.Log("Save mazeID " + index);
         Debug.Log("Save mazeCode " + mazeCode);
 
         if (mazeCode == "")
-        {
-            return;
-        }
-
-        if (mazeID <= 0)
         {
             return;
         }
@@ -46,29 +45,33 @@ public class GameModel : Singleton<GameModel>
         }
         else
         {
+             
             file = File.Open(Application.persistentDataPath + "/levels.bytes", FileMode.Create);
         }
 
         LevelData level;
 
-        Debug.Log("Save levels.levels.Count " + levels.levels.Count);
+        Debug.Log("Save levels.levels.Count " + levelsData.levels.Count);
 
-        if (levels.levels.Count > mazeID)
+        if (levelsData.levels.Count >= index + 1)
         {
-            level = levels.levels[mazeID - 1];
+            level = levelsData.levels[index];
             Debug.Log("Save level exists " + level);
         }
         else
         {
             level = new LevelData();
-            levels.levels.Add(level);
+            levelsData.levels.Add(level);
             Debug.Log("Save level does not exist " + level);
         }
 
+        Debug.Log("Save maze index  " + index);
+
         level.data = mazeCode;
-        level.level = mazeID.ToString();
-        level.width = mazeSize.x.ToString();
-        level.height = mazeSize.y.ToString();
+        level.index = index;
+        level.width = mazeSize.x;
+        level.height = mazeSize.y;
+        level.hasEnemy = hasEnemy;
 
         //Debug.Log("Save level " + levels.levels[mazeID - 1].data);
 
@@ -76,7 +79,7 @@ public class GameModel : Singleton<GameModel>
 
         try
         {
-            bf.Serialize(file, levels);
+            bf.Serialize(file, levelsData);
         }
         catch (Exception e)
         {
@@ -85,42 +88,91 @@ public class GameModel : Singleton<GameModel>
         }
 
         file.Close();
+
     }
 
-    public void Load(int levelNumber)
+    public void SaveTime(float time)
     {
-        if(levels.levels.Count <= 0)
+        Debug.Log("SaveTime " + time);
+
+        currentLevel.bestTime = time;
+
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Open(Application.persistentDataPath + "/levels.bytes", FileMode.Create);
+
+        try
+        {
+            bf.Serialize(file, levelsData);
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e, this);
+            return;
+        }
+    }
+
+    public void Load(int index)
+    {
+        Debug.Log("Load levels.levels.Count " + levelsData.levels.Count);
+
+        if (levelsData.levels.Count <= 0)
         {
             BinaryFormatter bf = new BinaryFormatter();
             if (Application.isEditor)
             {
                 FileStream file = File.Open(Application.dataPath + "/Resources/levels.bytes", FileMode.Open);
-                levels = (Levels)bf.Deserialize(file);
+                levelsData = (Levels)bf.Deserialize(file);
+                Debug.Log("Load levels " + levelsData);
                 file.Close();
             }
             else if (!File.Exists(Application.persistentDataPath + "/levels.bytes"))
             {
                 TextAsset assets = Resources.Load<TextAsset>("levels");
-                Debug.Log("TextAsset " + assets);
+                Debug.Log("Load TextAsset " + assets);
                 Stream s = new MemoryStream(assets.bytes);
-                levels = bf.Deserialize(s) as Levels;
+                levelsData = bf.Deserialize(s) as Levels;
             }
             else
             {
                 FileStream file = File.Open(Application.persistentDataPath + "/levels.bytes", FileMode.Open);
-                levels = (Levels)bf.Deserialize(file);
+                levelsData = (Levels)bf.Deserialize(file);
                 file.Close();
+
+                TextAsset assets = Resources.Load<TextAsset>("levels");
+                Stream s = new MemoryStream(assets.bytes);
+                Levels levelsFromAssets = bf.Deserialize(s) as Levels;
+
+                if (levelsData.version != levelsFromAssets.version)
+                {
+                    foreach (LevelData levelFromAssets in levelsFromAssets.levels)
+                    {
+                        levelFromAssets.bestTime = levelsData.levels[levelFromAssets.index].bestTime;
+                    }
+
+                    levelsData = levelsFromAssets;
+                }
             }
         }
 
-        if (levelNumber > 0 && levels.levels.Count > levelNumber)
+        if (levelsData.levels.Count > index)
         {
-            Debug.Log("Loaded level " + levels.levels[0].level);
+            Debug.Log("Loaded level " + levelsData.levels[index].index);
             if(OnLevelLoaded != null)
             {
-                OnLevelLoaded(levels.levels[levelNumber - 1]);
+                _currentLevelIndex = index;
+                OnLevelLoaded(levelsData.levels[index]);
             }
         }
+    }
+
+    internal void NextLevel()
+    {
+        var nextLevelIndex = _currentLevelIndex += 1;
+        if (levelsData.levels.Count > nextLevelIndex)
+        {
+            currentLevel = levelsData.levels[nextLevelIndex];
+        }
+            
     }
 }
 
@@ -128,10 +180,11 @@ public class GameModel : Singleton<GameModel>
 public class LevelData
 {
     public string data;
-    public string level;
-    public string width;
-    public string height;
-    public int bestTime = 0;
+    public int index;
+    public float width;
+    public float height;
+    public float bestTime = 0f;
+    public bool hasEnemy;
 }
 
 [Serializable]
@@ -139,5 +192,6 @@ public class Levels
 {
     [SerializeField]
     public List<LevelData> levels = new List<LevelData>();
+    public string version = "0.0.2";
 }
 

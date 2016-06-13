@@ -29,7 +29,15 @@ public class DistanceToPlayer : MonoBehaviour {
         // Create a vector from the enemy to the player and store the angle between it and forward.
         float distance = Mathf.Abs(Vector3.Distance(player.transform.position, transform.position));
 
-        if (distance < showDistance)
+        RaycastHit hit;
+        // Create a vector from the enemy to the player and store the angle between it and forward.
+        Vector3 direction = player.transform.position - transform.position;
+
+        if (Physics.Raycast(transform.position, direction.normalized, out hit, showDistance) && hit.collider.gameObject == player)
+        {
+            effect.Show();
+        }
+        else if (distance < 1f)
         {
             effect.Show();
         }

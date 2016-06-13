@@ -37,7 +37,7 @@ public class MazeEditor : Editor { // extend the Editor class
         if (GUILayout.Button("Save Maze"))
         {
             // if button pressed, then call function in script
-            GameModel.Instance.Save(_mazeGenarator.mazeID, _mazeGenarator.mazeCode, _mazeGenarator.mazeSize);
+            GameModel.Instance.Save(_mazeGenarator.mazeID, _mazeGenarator.mazeCode, _mazeGenarator.mazeSize, _mazeGenarator.hasEnemy);
         }
         EditorGUILayout.EndHorizontal();
     }

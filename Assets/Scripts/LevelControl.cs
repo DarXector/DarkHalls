@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using UI.Pagination;
 using System.Collections.Generic;
@@ -11,16 +10,14 @@ public class LevelControl : MonoBehaviour {
     public PagedRect Pages = null;
     public Button levelButton;
     public String gameScene;
+    public String backScene;
     
     public int columns = 4;
 
     private List<LevelData> _levels;
 
-    internal void StartGame(LevelData level)
-    {
-        GameModel.Instance.currentLevel = level;
-        SceneManager.LoadScene(gameScene);
-    }
+    public AudioClip tapSFX;
+    private AudioSource _audio;
 
     private List<Page> _pages;
     private bool _elementsAdded;
@@ -33,12 +30,16 @@ public class LevelControl : MonoBehaviour {
         if (instance == null)
             instance = this.GetComponent<LevelControl>();
 
+        _audio = GetComponent<AudioSource>();
+
     }
 
     void Start ()
     {
+        GameModel.Instance.navigated = true;
+
         _elementsAdded = false;
-        _levels = GameModel.Instance.levels.levels;
+        _levels = GameModel.Instance.levelsData.levels;
         _pages = new List<Page>();
 
         int i = 0;
@@ -59,13 +60,20 @@ public class LevelControl : MonoBehaviour {
 
     void Update()
     {
+        if(Screen.width <= 0f)
+        {
+            return;
+        }
+
         RectTransform myRect = _pages[0].GetComponent<RectTransform>();
 
         if (!_elementsAdded && myRect.rect.width > 0)
         {
+            //Debug.Log("Screen.width " + Screen.width);
             _elementsAdded = true;
-            Debug.Log("myRect " + myRect.rect.height + " : " + myRect.rect.width);
-            var buttonWidth = (myRect.rect.width - 30) / (float)columns;            //Change
+            var scale = Screen.width / 600f;
+            //Debug.Log("myRect " + myRect.rect.height + " : " + myRect.rect.width + " scale: " + scale);
+            var buttonWidth = (myRect.rect.width - 32 * scale) / (float)columns; 
 
             int i = 0;
             foreach (LevelData level in _levels)
@@ -75,6 +83,7 @@ public class LevelControl : MonoBehaviour {
                 {
                     GridLayoutGroup grid = _pages[index].GetComponent<GridLayoutGroup>();
                     grid.cellSize = new Vector2(buttonWidth, buttonWidth);
+                    grid.spacing = new Vector2(8 * scale, 8 * scale);
                     Pages.UpdatePagination();
                 }
 
@@ -86,5 +95,18 @@ public class LevelControl : MonoBehaviour {
             }
         }
         
+    }
+
+    public void GoBack()
+    {
+        _audio.PlayOneShot(tapSFX);
+        SceneManager.LoadScene(backScene);
+    }
+
+    internal void StartGame(LevelData level)
+    {
+        _audio.PlayOneShot(tapSFX);
+        GameModel.Instance.currentLevel = level;
+        SceneManager.LoadScene(gameScene);
     }
 }

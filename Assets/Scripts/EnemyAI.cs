@@ -2,6 +2,7 @@
 using System.Collections;
 
 [RequireComponent(typeof(Seeker))]
+[RequireComponent(typeof(EnemySoundControl))]
 public class EnemyAI : AIPath
 {
     public delegate void OnTargetReachedEvent();
@@ -11,16 +12,19 @@ public class EnemyAI : AIPath
 
     public float normalSpeed = 1f;
     public float chaseSpeed = 2f;
-    public float showDistance = 2f;
     public float chaseDistance = 1.5f;
 
     private GameObject player;
+
+    private EnemySoundControl _soundControl;
 
     public new void Start()
     {
         target = GameManager.gm.GetWaypoint();
 
         player = GameObject.FindGameObjectWithTag("Player");
+
+        _soundControl = GetComponent<EnemySoundControl>();
 
         speed = normalSpeed;
 
@@ -37,7 +41,7 @@ public class EnemyAI : AIPath
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if(hit.collider.tag == "Player")
+        if (hit.collider.tag == "Player" && OnPlayerCought != null)
         {
             OnPlayerCought();
         }
@@ -60,12 +64,13 @@ public class EnemyAI : AIPath
         {
             if (!playerInSight)
             {
-                Debug.Log("Seen player");
+                //Debug.Log("Seen player");
                 playerInSight = true;
                 speed = chaseSpeed;
+                _soundControl.PlayRoar();
             }
 
-            Debug.Log("Chasing player");
+            //Debug.Log("Chasing player");
             target = player.transform;
 
             base.Update();
@@ -74,7 +79,7 @@ public class EnemyAI : AIPath
 
         if (playerInSight)
         {
-            Debug.Log("Lost sight of player");
+            //Debug.Log("Lost sight of player");
             speed = normalSpeed;
             playerInSight = false;
             GetNewWaypoint();

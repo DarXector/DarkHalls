@@ -19,6 +19,7 @@ public class MazeGenerator : MonoBehaviour
     public GameObject enemyPrefab;
     public GameObject navigationNodes;
     public GameObject navigationNode;
+    public bool hasEnemy = false;
 
     [HideInInspector]
     public List<GameObject> glowTiles;
@@ -47,23 +48,31 @@ public class MazeGenerator : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Debug.Log("MazeGenerator Start");
         GameModel.Instance.OnLevelLoaded += Parse;
-        GameModel.Instance.Load(mazeID);
+        GameModel.Instance.Load(GameModel.Instance.currentLevel.index);
     }
 
-    protected void ResetMaze()
+    void ResetMaze()
     {
         mazeCode = "";
 
-        while (transform.childCount != 0)
+        if (gameObject != null)
         {
-            DestroyImmediate(transform.GetChild(0).gameObject);
+            while (transform.childCount != 0)
+            {
+                DestroyImmediate(transform.GetChild(0).gameObject);
+            }
         }
-
-        while (navigationNodes.transform.childCount != 0)
+        
+        if(navigationNodes != null)
         {
-            DestroyImmediate(navigationNodes.transform.GetChild(0).gameObject);
+            while (navigationNodes.transform.childCount != 0)
+            {
+                DestroyImmediate(navigationNodes.transform.GetChild(0).gameObject);
+            }
         }
+        
 
         glowTiles = new List<GameObject>();
     }
@@ -215,7 +224,11 @@ public class MazeGenerator : MonoBehaviour
             }
         }
 
-        SpawnEnemy();
+        if(hasEnemy)
+        {
+            SpawnEnemy();
+        }
+
 
         OnDrawComplete();
     }
@@ -266,7 +279,6 @@ public class MazeGenerator : MonoBehaviour
         var position = GetRandomNode().position;
         enemy = (GameObject)Instantiate(enemyPrefab, new Vector3(position.x, position.y, position.z), Quaternion.identity);
         enemy.transform.parent = gameObject.transform;
-        GameManager.gm.enemy = enemy;
     }
 
     public Transform GetRandomNode()
@@ -276,11 +288,13 @@ public class MazeGenerator : MonoBehaviour
 
     public void Parse(LevelData level)
     {
-        Debug.Log("Parse " + level);
+        Debug.Log("Parse " + level.data);
 
         ResetMaze();
 
-        mazeSize = new Vector2(int.Parse(level.width), int.Parse(level.height));
+        mazeSize = new Vector2(level.width, level.height);
+
+        hasEnemy = level.hasEnemy;
 
         _width = (int)mazeSize.x * 2 + 1;
         _height = (int)mazeSize.y * 2 + 1;
@@ -302,5 +316,10 @@ public class MazeGenerator : MonoBehaviour
         }
 
         DrawMaze();
+    }
+
+    void OnDestroy()
+    {
+        GameModel.Instance.OnLevelLoaded -= Parse;
     }
 }

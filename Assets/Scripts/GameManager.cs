@@ -2,8 +2,11 @@
 using System.Collections;
 using UnityEngine.UI; // include UI namespace so can reference UI elements
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
+using System;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
 
     // static reference to game manager so can be called from other scripts directly (not just through gameobject component)
     public static GameManager gm;
@@ -11,6 +14,7 @@ public class GameManager : MonoBehaviour {
     // levels to move to on victory and lose
     public string levelAfterVictory;
     public string levelAfterGameOver;
+    public string levelBack;
 
     // game performance
     public float time = 0;
@@ -18,9 +22,10 @@ public class GameManager : MonoBehaviour {
 
     // UI elements to control
     public Text UITime;
-    public Text UIBestTime;
-    public Text UILevel;
+    //public Text UIBestTime;
+    //public Text UILevel;
     public GameObject UIGamePaused;
+    public GameObject UIOuch;
 
     private MazeGenerator _mazeGenerator;
     public GameObject maze;
@@ -28,14 +33,26 @@ public class GameManager : MonoBehaviour {
     private AstarPath _astar;
     public GameObject AStarObject;
 
-    public GameObject enemy;
+    public  GameObject enemy;
     private EnemyAI _enemyAI;
 
+    public GameObject player;
+
+    public GameObject screenFader;
+    public ScreenFader _screenFader;
+
+    public bool timerActive;
+    public bool playerCanMove;
+    private float _timer;
+
     // set things up here
-    void Awake() {
+    void Awake()
+    {
         // setup reference to game manager
         if (gm == null)
             gm = this.GetComponent<GameManager>();
+
+        GameModel.Instance.gameObject.GetComponent<AudioSource>().Stop();
 
         // setup all the variables, the UI, and provide errors if things not setup properly.
         SetupDefaults();
@@ -59,16 +76,36 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        //if(_player.GetComponent<CharacterController2D>().playerCanMove)
-        //{ // game playing state, so update the timer
-        //    currentTime -= Time.deltaTime;
-        //    mainTimerDisplay.text = currentTime.ToString("0.00");
-        //}
+        if (timerActive)
+        {
+            _timer += Time.deltaTime;
+
+            string minutes = Mathf.Floor(_timer / 60).ToString("00");
+            string seconds = Mathf.Floor(_timer % 60).ToString("00");
+
+            UITime.text = minutes + ":" + seconds;
+        }
+    }
+
+    internal void ShowOuch()
+    {
+        playerCanMove = false;
+        UIOuch.SetActive(true);
+        StartCoroutine(HideOuch());
+    }
+
+    // load the nextLevel after delay
+    IEnumerator HideOuch()
+    {
+        yield return new WaitForSeconds(1f);
+        playerCanMove = true;
+        UIOuch.SetActive(false);
     }
 
     // setup all the variables, the UI, and provide errors if things not setup properly.
     void SetupDefaults()
     {
+        Debug.Log("GameManager SetupDefaults");
 
         // if levels not specified, default to current level
         if (levelAfterVictory == "")
@@ -83,15 +120,21 @@ public class GameManager : MonoBehaviour {
             levelAfterGameOver = SceneManager.GetActiveScene().name;
         }
 
+        if (levelBack == "")
+        {
+            Debug.LogWarning("levelBack not specified, defaulted to current level");
+            levelBack = SceneManager.GetActiveScene().name;
+        }
+
         // friendly error messages
         if (UITime == null)
             Debug.LogError("Need to set UIScore on Game Manager.");
 
-        if (UIBestTime == null)
-            Debug.LogError("Need to set UIHighScore on Game Manager.");
+        //if (UIBestTime == null)
+        //    Debug.LogError("Need to set UIHighScore on Game Manager.");
 
-        if (UILevel == null)
-            Debug.LogError("Need to set UILevel on Game Manager.");
+        //if (UILevel == null)
+        //    Debug.LogError("Need to set UILevel on Game Manager.");
 
         if (UIGamePaused == null)
             Debug.LogError("Need to set UIGamePaused on Game Manager.");
@@ -100,6 +143,7 @@ public class GameManager : MonoBehaviour {
             Debug.LogError("Need to set maze on Game Manager.");
         else
         {
+            Debug.Log("GameManager SetupDefaults maze " + maze);
             _mazeGenerator = maze.GetComponent<MazeGenerator>();
             _mazeGenerator.OnDrawComplete += OnMazeDrawComplete;
         }
@@ -109,28 +153,36 @@ public class GameManager : MonoBehaviour {
         else
             _astar = AStarObject.GetComponent<AstarPath>();
 
-        // get stored player prefs
-        RefreshPlayerState();
+        if (screenFader == null)
+            Debug.LogError("Need to set screenFader on Game Manager.");
+        else
+        {
+            _screenFader = screenFader.GetComponent<ScreenFader>();
+            _screenFader.FadeFrom(new Color(0.0f, 0.0f, 0.0f, 1.0f));
+        }
 
         // get the UI ready for the game
         RefreshGUI();
+
+        playerCanMove = true;
+
     }
 
     void OnMazeDrawComplete()
     {
-        if(_astar)
-        {
-            _astar.Scan();
-        }
+        Debug.Log("OnMazeDrawComplete");
 
+        enemy = _mazeGenerator.enemy;
         if(enemy)
         {
-            _enemyAI = enemy.GetComponent<EnemyAI>();
-            _enemyAI.OnPlayerCought += OnPlayerCought;
+            enemy.GetComponent<EnemyAI>().OnPlayerCought += OnPlayerCought;
         }
-        else
+
+        player = _mazeGenerator.player;
+
+        if (_astar)
         {
-            Debug.LogError("Need to set enemy on Game Manager.");
+            _astar.Scan();
         }
     }
 
@@ -144,52 +196,103 @@ public class GameManager : MonoBehaviour {
         return _mazeGenerator.GetRandomNode();
     }
 
-    // get stored Player Prefs if they exist, otherwise go with defaults set on gameObject
-    void RefreshPlayerState()
+    public void StartScan()
     {
-		time = PlayerPrefManager.GetTime();
-		bestTime = PlayerPrefManager.GetBestTime();
+        GetComponent<ScanPowerUp>().StartScan();
+        var target = EventSystem.current.currentSelectedGameObject;
+        LeanTween.moveX(target, target.transform.position.x + 200f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
+    }
 
-		// save that this level has been accessed so the MainMenu can enable it
-		PlayerPrefManager.UnlockLevel();
-	}
-
-	// refresh all the GUI elements
-	void RefreshGUI()
+    public void StartPhase()
     {
-        if(!UITime || !UIBestTime || !UILevel)
+        player.GetComponent<PhasePowerUp>().StartPhase();
+        var target = EventSystem.current.currentSelectedGameObject;
+        LeanTween.moveX(target, target.transform.position.x + 200f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
+    }
+
+    // refresh all the GUI elements
+    void RefreshGUI()
+    {
+        timerActive = false;
+
+        if (!UITime)
         {
             return;
         }
         // set the text elements of the UI
-        UITime.text = "Time: " + time.ToString();
-        UIBestTime.text = "Best Time: " + bestTime.ToString();
-		UILevel.text = SceneManager.GetActiveScene().name;
-	}
+        UITime.text = "00:00";
+    }
 
     // public function to remove player life and reset game accordingly
     public void ResetGame()
     {
-        // remove life and update GUI
-        RefreshGUI();
+        playerCanMove = false;
+        timerActive = false;
 
+        _screenFader.FadeTo(new Color(0.0f, 0.0f, 0.0f, 1.0f));
+        StartCoroutine(LoadSameLevel());
+    }
+
+    public void Back()
+    {
+        playerCanMove = false;
+        timerActive = false;
+
+        _screenFader.FadeTo(new Color(0.0f, 0.0f, 0.0f, 1.0f));
+        StartCoroutine(LoadLevelBack());
+
+        GameModel.Instance.gameObject.GetComponent<AudioSource>().Play();
+    }
+
+    public void LevelCompete()
+    {
+        playerCanMove = false;
+        timerActive = false;
+
+        var model = GameModel.Instance;
+
+        if (_timer < model.currentLevel.bestTime || model.currentLevel.bestTime == 0f)
+        {
+            GameModel.Instance.SaveTime(_timer);
+        }
+
+        _screenFader.FadeTo(new Color(1.0f, 1.0f, 1.0f, 1.0f));
+        StartCoroutine(LoadNextLevel());
+
+        GameModel.Instance.gameObject.GetComponent<AudioSource>().Play();
+    }
+
+    // load the nextLevel after delay
+    IEnumerator LoadNextLevel()
+    {
+        GameModel.Instance.NextLevel();
+        yield return new WaitForSeconds(2);
+        SceneManager.LoadScene(levelAfterVictory);
+    }
+
+    IEnumerator LoadSameLevel()
+    {
+        yield return new WaitForSeconds(2);
+        RefreshGUI();
         SceneManager.LoadScene(levelAfterGameOver);
     }
 
-	// public function for level complete
-	public void LevelCompete()
+    IEnumerator LoadLevelBack()
     {
-		// save the current player prefs before moving to the next level
-		PlayerPrefManager.SavePlayerState(time,bestTime);
+        yield return new WaitForSeconds(2);
+        SceneManager.LoadScene(levelBack);
+    }
 
-		// use a coroutine to allow the player to get fanfare before moving to next level
-		StartCoroutine(LoadNextLevel());
-	}
-
-	// load the nextLevel after delay
-	IEnumerator LoadNextLevel()
+    void OnDestroy()
     {
-		yield return new WaitForSeconds(3.5f);
-        SceneManager.LoadScene(levelAfterVictory);
-	}
+        if(_mazeGenerator)
+        {
+            _mazeGenerator.OnDrawComplete -= OnMazeDrawComplete;
+        }
+
+        if(enemy)
+        {
+            enemy.GetComponent<EnemyAI>().OnPlayerCought -= OnPlayerCought;
+        }
+    }
 }

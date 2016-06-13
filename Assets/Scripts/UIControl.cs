@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(AudioSource))]
 public class UIControl : MonoBehaviour {
 
     public RectTransform logoGroup;
@@ -8,6 +9,9 @@ public class UIControl : MonoBehaviour {
     public RectTransform playButton;
     public RectTransform intructionsButton;
     public RectTransform quitButton;
+
+    public AudioClip tapSFX;
+    private AudioSource _audio;
 
     public string levelSelectScene;
     public string instructionsScene;
@@ -17,16 +21,27 @@ public class UIControl : MonoBehaviour {
     // Use this for initialization
     void Awake()
     {
-        instructionsScene = "";
-        LeanTween.moveX(playButton, -500f, 0f);
-        LeanTween.moveX(intructionsButton, -500f, 0f);
-        LeanTween.moveX(quitButton, -500f, 0f);
-        LeanTween.moveY(logoGroup, -360f, 0f);
+        _audio = GetComponent<AudioSource>();
     }
 
     void Start ()
     {
-        Invoke("AnimateIntro", 5f);
+        LeanTween.moveX(playButton, -500f, 0f);
+        LeanTween.moveX(intructionsButton, -500f, 0f);
+        LeanTween.moveX(quitButton, -500f, 0f);
+
+        if (GameModel.Instance.navigated)
+        {
+            LeanTween.moveY(logoGroup, 0, 0);
+            AnimateIntroButtons();
+        }
+        else
+        {
+            LeanTween.moveY(logoGroup, -360f, 0f);
+            Invoke("AnimateIntro", 4f);
+        }
+
+        
 	}
 
     void AnimateIntro()
@@ -50,6 +65,7 @@ public class UIControl : MonoBehaviour {
 
     void ChangeScene()
     {
+        
         SceneManager.LoadScene(_nextScene);
     }
 
@@ -57,17 +73,21 @@ public class UIControl : MonoBehaviour {
     {
         _nextScene = levelSelectScene;
         AnimateOutroButtons();
-        
+        _audio.PlayOneShot(tapSFX);
+
     }
 
     public void LoadInstructions()
     {
+        Debug.Log("Load " + instructionsScene);
         _nextScene = instructionsScene;
         AnimateOutroButtons();
+        _audio.PlayOneShot(tapSFX);
     }
 
     public void Quit()
     {
+        _audio.PlayOneShot(tapSFX);
         Debug.Log("QUIT!");
         Application.Quit();
     }

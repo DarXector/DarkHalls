@@ -17,6 +17,7 @@ public class ShowHideEffect : MonoBehaviour {
         foreach (var particle in particles)
         {
             particle.SetActive(true);
+            particle.GetComponent<ParticleSystem>().Play();
         }
     }
 
@@ -29,7 +30,7 @@ public class ShowHideEffect : MonoBehaviour {
 
         foreach (var particle in particles)
         {
-            particle.SetActive(false);
+            particle.GetComponent<ParticleSystem>().Stop();
         }
     }
 }
