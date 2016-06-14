@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using GooglePlayGames;
 using UnityEngine.SocialPlatforms;
 using GooglePlayGames.BasicApi;
+using System.Reflection;
 
 public class GameModel : Singleton<GameModel>
 {
@@ -28,6 +29,11 @@ public class GameModel : Singleton<GameModel>
 
     public void Start()
     {
+        // recommended for debugging:
+        PlayGamesPlatform.DebugLogEnabled = true;
+        // Activate the Google Play Games platform
+        PlayGamesPlatform.Activate();
+
         levelsData = new Levels();
 
         Load(0);
@@ -101,11 +107,28 @@ public class GameModel : Singleton<GameModel>
 
     }
 
+    string GetBoardID(int index)
+    {
+        switch (currentLevel.index)
+        {
+            case 0:
+                return GPGSlds.leaderboard_level1;
+        }
+
+        return "";
+    }
+
     public void SaveTime(float time)
     {
         Debug.Log("SaveTime " + time);
 
         currentLevel.bestTime = time;
+
+        string boardID = GetBoardID(currentLevel.index);
+
+        Debug.Log("boardID " + boardID);
+
+        PostScore((int)(time * 1000), boardID);
 
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Open(Application.persistentDataPath + "/levels.bytes", FileMode.Create);
