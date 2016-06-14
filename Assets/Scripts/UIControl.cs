@@ -37,7 +37,7 @@ public class UIControl : MonoBehaviour {
         }
         else
         {
-            LeanTween.moveY(logoGroup, -360f, 0f);
+            LeanTween.moveY(logoGroup, -Screen.height / 2, 0f);
             Invoke("AnimateIntro", 4f);
         }
 

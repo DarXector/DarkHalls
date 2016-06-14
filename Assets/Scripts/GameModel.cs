@@ -5,6 +5,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Collections.Generic;
 
+using GooglePlayGames;
+using UnityEngine.SocialPlatforms;
+using GooglePlayGames.BasicApi;
+
 public class GameModel : Singleton<GameModel>
 {
     protected GameModel() { } // guarantee this will be always a singleton only - can't use the constructor!
@@ -15,6 +19,10 @@ public class GameModel : Singleton<GameModel>
     public delegate void OnLevelLoadedEvent(LevelData level);
     public event OnLevelLoadedEvent OnLevelLoaded;
 
+    public delegate void OnLeaderBoardLoaded(LeaderboardScoreData leaderBoard);
+
+    public bool authenticated = false;
+
     public bool navigated = false;
     private int _currentLevelIndex;
 
@@ -24,6 +32,8 @@ public class GameModel : Singleton<GameModel>
 
         Load(0);
         currentLevel = levelsData.levels[0];
+
+        Authenticate();
     }
 
     public void Save(int index, string mazeCode, Vector2 mazeSize, bool hasEnemy)
@@ -173,6 +183,54 @@ public class GameModel : Singleton<GameModel>
             currentLevel = levelsData.levels[nextLevelIndex];
         }
             
+    }
+
+    public void Authenticate()
+    {
+        Debug.Log("Authenticate");
+        Social.localUser.Authenticate((bool success) => {
+
+            Debug.Log("Authenticate succes: " + success);
+
+            if (success)
+            {
+                authenticated = true;
+            }
+            else
+            {
+                authenticated = false;
+            }
+        });
+    }
+
+    public void PostScore(int time, string boardID)
+    {
+        if (!authenticated)
+        {
+            return;
+        }
+
+        Debug.Log("PostScore: " + time + " boardID " + boardID);
+
+        Social.ReportScore(time, boardID, (bool success) => {
+            Debug.Log("ReportScore succes: "+ success);
+        });
+    }
+
+    public void GetLeaderBoard(string leaderBoardID, OnLeaderBoardLoaded LeaderBoardLoaded )
+    {
+        PlayGamesPlatform.Instance.LoadScores(
+            leaderBoardID,
+            LeaderboardStart.TopScores,
+            5,
+            LeaderboardCollection.Public,
+            LeaderboardTimeSpan.AllTime,
+            (data) =>
+            {
+                Debug.Log("Leaderboard data valid: " + data.Valid);
+                Debug.Log("approx:" + data.ApproximateCount + " have " + data.Scores.Length);
+                LeaderBoardLoaded(data);
+            });
     }
 }
 

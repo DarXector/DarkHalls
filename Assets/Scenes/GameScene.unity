@@ -1123,6 +1123,7 @@ GameObject:
   - 81: {fileID: 167373357}
   - 114: {fileID: 167373362}
   - 114: {fileID: 167373363}
+  - 114: {fileID: 167373364}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1234,17 +1235,28 @@ MonoBehaviour:
   m_GlowRenderLayer:
     serializedVersion: 2
     m_Bits: 256
-  m_GlowResolution: 0
+  m_GlowResolution: 1
   m_ShowCutoutGlow: 0
   m_ShowTransparentGlow: 1
   m_GlowType: 0
-  m_GlowQuality: 1
+  m_GlowQuality: 0
   m_FullScreenGlowTint: {r: 1, g: 1, b: 1, a: 0}
   m_BlurSpread: 0.2
   m_BlurIterations: 6
   m_GlowIntensity: 0.3
   m_BlurOffset: 0
   m_Samples: 2
+--- !u!114 &167373364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 167373356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01db51e9c89163b478c22d8539ce565b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &191886613
 GameObject:
   m_ObjectHideFlags: 0
