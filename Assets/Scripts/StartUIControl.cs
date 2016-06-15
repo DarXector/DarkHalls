@@ -2,10 +2,9 @@
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AudioSource))]
-public class UIControl : MonoBehaviour {
+public class StartUIControl : MonoBehaviour {
 
     public RectTransform logoGroup;
-    public RectTransform backgroundCanvas;
     public RectTransform playButton;
     public RectTransform intructionsButton;
     public RectTransform quitButton;

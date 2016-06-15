@@ -3,7 +3,7 @@ using System;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AudioSource))]
-public class InstructionsControl : MonoBehaviour {
+public class InstructionsUIControl : MonoBehaviour {
 
     public String backScene;
 
