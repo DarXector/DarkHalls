@@ -257,15 +257,14 @@ public class GameManager : MonoBehaviour
         }
 
         _screenFader.FadeTo(new Color(1.0f, 1.0f, 1.0f, 1.0f));
-        StartCoroutine(LoadNextLevel());
+        StartCoroutine(LoadNextScene());
 
         GameModel.Instance.gameObject.GetComponent<AudioSource>().Play();
     }
 
     // load the nextLevel after delay
-    IEnumerator LoadNextLevel()
+    IEnumerator LoadNextScene()
     {
-        GameModel.Instance.NextLevel();
         yield return new WaitForSeconds(2);
         SceneManager.LoadScene(levelAfterVictory);
     }

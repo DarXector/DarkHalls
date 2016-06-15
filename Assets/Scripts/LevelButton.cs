@@ -14,7 +14,6 @@ public class LevelButton : MonoBehaviour
             LevelControl.instance.StartGame(level);
         });
 
-        Debug.Log("LevelButton level " + level.index.ToString());
         GetComponentsInChildren<Text>()[0].text = (level.index + 1).ToString();
 
         string minutes = Mathf.Floor(level.bestTime / 60).ToString("00");

@@ -71,7 +71,7 @@ public class LevelControl : MonoBehaviour {
         {
             //Debug.Log("Screen.width " + Screen.width);
             _elementsAdded = true;
-            var scale = Screen.width / 600f;
+            var scale = Screen.width / 800f;
             //Debug.Log("myRect " + myRect.rect.height + " : " + myRect.rect.width + " scale: " + scale);
             var buttonWidth = (myRect.rect.width - 32 * scale) / (float)columns; 
 

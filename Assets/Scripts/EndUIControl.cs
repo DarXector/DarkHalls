@@ -2,18 +2,24 @@
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AudioSource))]
-public class EndUIControl : MonoBehaviour {
+public class EndUIControl : MonoBehaviour
+{
+    public RectTransform yourTimeLabel;
+    public RectTransform yourTimeContainer;
 
-    public RectTransform logoGroup;
-    public RectTransform playButton;
-    public RectTransform intructionsButton;
-    public RectTransform quitButton;
+    public RectTransform bestTimeLabel;
+    public RectTransform bestTimeContainer;
+
+    public RectTransform leaderBoardButton;
+    public RectTransform replayButton;
+    public RectTransform nextButton;
+    public RectTransform backButton;
 
     public AudioClip tapSFX;
     private AudioSource _audio;
 
-    public string levelSelectScene;
-    public string instructionsScene;
+    public string gameScene;
+    public string backScene;
 
     private string _nextScene;
 
@@ -25,69 +31,67 @@ public class EndUIControl : MonoBehaviour {
 
     void Start ()
     {
-        LeanTween.moveX(playButton, -500f, 0f);
-        LeanTween.moveX(intructionsButton, -500f, 0f);
-        LeanTween.moveX(quitButton, -500f, 0f);
+        LeanTween.moveX(yourTimeLabel, -600f, 0f);
+        LeanTween.moveX(yourTimeContainer, 600f, 0f);
+        LeanTween.moveX(bestTimeLabel, -600f, 0f);
+        LeanTween.moveX(bestTimeContainer, 600f, 0f);
+        LeanTween.moveX(leaderBoardButton, 600f, 0f);
+        LeanTween.moveX(replayButton, -600f, 0f);
+        LeanTween.moveX(nextButton, 600f, 0f);
+        LeanTween.moveX(backButton, -600f, 0f);
 
-        if (GameModel.Instance.navigated)
-        {
-            LeanTween.moveY(logoGroup, 0, 0);
-            AnimateIntroButtons();
-        }
-        else
-        {
-            LeanTween.moveY(logoGroup, -Screen.height / 2, 0f);
-            Invoke("AnimateIntro", 4f);
-        }
-
-        
-	}
-
-    void AnimateIntro()
-    {
-        LeanTween.moveY(logoGroup, 0, 0.4f).setEase(LeanTweenType.easeInOutQuad).onComplete += AnimateIntroButtons;
+        AnimateIntroButtons();
     }
 
     void AnimateIntroButtons()
     {
-        LeanTween.moveX(playButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
-        LeanTween.moveX(intructionsButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
-        LeanTween.moveX(quitButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f);
+        LeanTween.moveX(yourTimeLabel, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
+        LeanTween.moveX(yourTimeContainer, 185f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
+        LeanTween.moveX(bestTimeLabel, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
+        LeanTween.moveX(bestTimeContainer, 185f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
+        LeanTween.moveX(leaderBoardButton, 30f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f);
+        LeanTween.moveX(replayButton, -60f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
+        LeanTween.moveX(nextButton, 30f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
+        LeanTween.moveX(backButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.8f);
     }
 
     void AnimateOutroButtons()
     {
-        LeanTween.moveX(playButton, -500f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
-        LeanTween.moveX(intructionsButton, -500f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
-        LeanTween.moveX(quitButton, -500f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f).onComplete += ChangeScene;
+        LeanTween.moveX(yourTimeLabel, -600f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
+        LeanTween.moveX(yourTimeContainer, 600f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
+        LeanTween.moveX(bestTimeLabel, -600f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
+        LeanTween.moveX(bestTimeContainer, 600f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
+        LeanTween.moveX(leaderBoardButton, 600f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f);
+        LeanTween.moveX(replayButton, -600f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
+        LeanTween.moveX(nextButton, 600f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
+        LeanTween.moveX(backButton, -600f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.8f).onComplete += ChangeScene;
     }
 
     void ChangeScene()
     {
-        
         SceneManager.LoadScene(_nextScene);
     }
 
-    public void LoadLevelSelect()
+    public void Next()
     {
-        _nextScene = levelSelectScene;
+        GameModel.Instance.NextLevel();
+        _nextScene = gameScene;
         AnimateOutroButtons();
         _audio.PlayOneShot(tapSFX);
 
     }
 
-    public void LoadInstructions()
+    public void Replay()
     {
-        Debug.Log("Load " + instructionsScene);
-        _nextScene = instructionsScene;
+        _nextScene = gameScene;
         AnimateOutroButtons();
         _audio.PlayOneShot(tapSFX);
     }
 
-    public void Quit()
+    public void Back()
     {
+        _nextScene = backScene;
+        AnimateOutroButtons();
         _audio.PlayOneShot(tapSFX);
-        Debug.Log("QUIT!");
-        Application.Quit();
     }
 }

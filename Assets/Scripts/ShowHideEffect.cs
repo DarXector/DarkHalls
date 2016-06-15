@@ -16,7 +16,6 @@ public class ShowHideEffect : MonoBehaviour {
 
         foreach (var particle in particles)
         {
-            particle.SetActive(true);
             particle.GetComponent<ParticleSystem>().Play();
         }
     }
