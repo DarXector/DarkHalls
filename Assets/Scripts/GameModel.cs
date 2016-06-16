@@ -14,7 +14,7 @@ public class GameModel : Singleton<GameModel>
 {
     protected GameModel() { } // guarantee this will be always a singleton only - can't use the constructor!
 
-    public Levels levelsData = new Levels();
+    public GameData gameData = new GameData();
     internal LevelData currentLevel;
 
     public delegate void OnLevelLoadedEvent(LevelData level);
@@ -22,8 +22,10 @@ public class GameModel : Singleton<GameModel>
 
     public delegate void OnLeaderBoardLoaded(LeaderboardScoreData leaderBoard);
 
+    [HideInInspector]
     public bool authenticated = false;
 
+    [HideInInspector]
     public bool navigated = false;
     private int _currentLevelIndex;
 
@@ -34,12 +36,10 @@ public class GameModel : Singleton<GameModel>
         // Activate the Google Play Games platform
         PlayGamesPlatform.Activate();
 
-        levelsData = new Levels();
+        gameData = new GameData();
 
         Load(0);
-        currentLevel = levelsData.levels[0];
-
-        Authenticate();
+        currentLevel = gameData.levels[0];
     }
 
     public void Save(int index, string mazeCode, Vector2 mazeSize, bool hasEnemy)
@@ -67,17 +67,17 @@ public class GameModel : Singleton<GameModel>
 
         LevelData level;
 
-        Debug.Log("Save levels.levels.Count " + levelsData.levels.Count);
+        Debug.Log("Save levels.levels.Count " + gameData.levels.Count);
 
-        if (levelsData.levels.Count >= index + 1)
+        if (gameData.levels.Count >= index + 1)
         {
-            level = levelsData.levels[index];
+            level = gameData.levels[index];
             Debug.Log("Save level exists " + level);
         }
         else
         {
             level = new LevelData();
-            levelsData.levels.Add(level);
+            gameData.levels.Add(level);
             Debug.Log("Save level does not exist " + level);
         }
 
@@ -95,7 +95,7 @@ public class GameModel : Singleton<GameModel>
 
         try
         {
-            bf.Serialize(file, levelsData);
+            bf.Serialize(file, gameData);
         }
         catch (Exception e)
         {
@@ -135,7 +135,7 @@ public class GameModel : Singleton<GameModel>
 
         try
         {
-            bf.Serialize(file, levelsData);
+            bf.Serialize(file, gameData);
         }
         catch (Exception e)
         {
@@ -146,16 +146,16 @@ public class GameModel : Singleton<GameModel>
 
     public void Load(int index)
     {
-        Debug.Log("Load levels.levels.Count " + levelsData.levels.Count);
+        Debug.Log("Load levels.levels.Count " + gameData.levels.Count);
 
-        if (levelsData.levels.Count <= 0)
+        if (gameData.levels.Count <= 0)
         {
             BinaryFormatter bf = new BinaryFormatter();
             if (Application.isEditor)
             {
                 FileStream file = File.Open(Application.dataPath + "/Resources/levels.bytes", FileMode.Open);
-                levelsData = (Levels)bf.Deserialize(file);
-                Debug.Log("Load levels " + levelsData);
+                gameData = (GameData)bf.Deserialize(file);
+                Debug.Log("Load levels " + gameData);
                 file.Close();
             }
             else if (!File.Exists(Application.persistentDataPath + "/levels.bytes"))
@@ -163,37 +163,37 @@ public class GameModel : Singleton<GameModel>
                 TextAsset assets = Resources.Load<TextAsset>("levels");
                 Debug.Log("Load TextAsset " + assets);
                 Stream s = new MemoryStream(assets.bytes);
-                levelsData = bf.Deserialize(s) as Levels;
+                gameData = bf.Deserialize(s) as GameData;
             }
             else
             {
                 FileStream file = File.Open(Application.persistentDataPath + "/levels.bytes", FileMode.Open);
-                levelsData = (Levels)bf.Deserialize(file);
+                gameData = (GameData)bf.Deserialize(file);
                 file.Close();
 
                 TextAsset assets = Resources.Load<TextAsset>("levels");
                 Stream s = new MemoryStream(assets.bytes);
-                Levels levelsFromAssets = bf.Deserialize(s) as Levels;
+                GameData dataFromAssets = bf.Deserialize(s) as GameData;
 
-                if (levelsData.version != levelsFromAssets.version)
+                if (gameData.version != dataFromAssets.version)
                 {
-                    foreach (LevelData levelFromAssets in levelsFromAssets.levels)
+                    foreach (LevelData levelFromAssets in dataFromAssets.levels)
                     {
-                        levelFromAssets.bestTime = levelsData.levels[levelFromAssets.index].bestTime;
+                        levelFromAssets.bestTime = gameData.levels[levelFromAssets.index].bestTime;
                     }
 
-                    levelsData = levelsFromAssets;
+                    gameData = dataFromAssets;
                 }
             }
         }
 
-        if (levelsData.levels.Count > index)
+        if (gameData.levels.Count > index)
         {
-            Debug.Log("Loaded level " + levelsData.levels[index].index);
+            Debug.Log("Loaded level " + gameData.levels[index].index);
             if(OnLevelLoaded != null)
             {
                 _currentLevelIndex = index;
-                OnLevelLoaded(levelsData.levels[index]);
+                OnLevelLoaded(gameData.levels[index]);
             }
         }
     }
@@ -201,9 +201,9 @@ public class GameModel : Singleton<GameModel>
     internal void NextLevel()
     {
         var nextLevelIndex = _currentLevelIndex += 1;
-        if (levelsData.levels.Count > nextLevelIndex)
+        if (gameData.levels.Count > nextLevelIndex)
         {
-            currentLevel = levelsData.levels[nextLevelIndex];
+            currentLevel = gameData.levels[nextLevelIndex];
         }
             
     }
@@ -218,6 +218,20 @@ public class GameModel : Singleton<GameModel>
             if (success)
             {
                 authenticated = true;
+                gameData.authenticated = true;
+
+                BinaryFormatter bf = new BinaryFormatter();
+                FileStream file = File.Open(Application.persistentDataPath + "/levels.bytes", FileMode.Create);
+
+                try
+                {
+                    bf.Serialize(file, gameData);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e, this);
+                    return;
+                }
             }
             else
             {
@@ -269,10 +283,14 @@ public class LevelData
 }
 
 [Serializable]
-public class Levels
+public class GameData
 {
     [SerializeField]
     public List<LevelData> levels = new List<LevelData>();
     public string version = "0.0.2";
+    public bool authenticated = false;
 }
 
+[Serializable]
+public class Levels : GameData
+{}

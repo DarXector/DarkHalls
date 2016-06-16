@@ -11,7 +11,10 @@ public class LevelControl : MonoBehaviour {
     public Button levelButton;
     public String gameScene;
     public String backScene;
-    
+
+    public RectTransform levelList;
+    public RectTransform backButton;
+
     public int columns = 4;
 
     private List<LevelData> _levels;
@@ -23,6 +26,8 @@ public class LevelControl : MonoBehaviour {
     private bool _elementsAdded;
     // Use this for initialization
     public static LevelControl instance;
+
+    private string _nextScene;
 
     void Awake()
     {
@@ -38,8 +43,11 @@ public class LevelControl : MonoBehaviour {
     {
         GameModel.Instance.navigated = true;
 
+        LeanTween.moveX(levelList, -800f, 0f);
+        LeanTween.moveX(backButton, -600f, 0f);
+
         _elementsAdded = false;
-        _levels = GameModel.Instance.levelsData.levels;
+        _levels = GameModel.Instance.gameData.levels;
         _pages = new List<Page>();
 
         int i = 0;
@@ -56,6 +64,9 @@ public class LevelControl : MonoBehaviour {
 
             i++;
         }
+
+        LeanTween.moveX(levelList, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
+        LeanTween.moveX(backButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
     }
 
     void Update()
@@ -97,16 +108,28 @@ public class LevelControl : MonoBehaviour {
         
     }
 
-    public void GoBack()
+    void ChangeScene()
+    {
+        SceneManager.LoadScene(_nextScene);
+    }
+
+    void AnimateOutro()
     {
         _audio.PlayOneShot(tapSFX);
-        SceneManager.LoadScene(backScene);
+        LeanTween.moveX(levelList, -800f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
+        LeanTween.moveX(backButton, -600f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f).onComplete += ChangeScene;
+    }
+
+    public void GoBack()
+    {
+        AnimateOutro();
+        _nextScene = backScene;
     }
 
     internal void StartGame(LevelData level)
     {
-        _audio.PlayOneShot(tapSFX);
         GameModel.Instance.currentLevel = level;
-        SceneManager.LoadScene(gameScene);
+        AnimateOutro();
+        _nextScene = gameScene;
     }
 }

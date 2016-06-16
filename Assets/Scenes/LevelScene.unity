@@ -220,7 +220,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22401092, guid: ba71a33494122e1448adf841a7ba2a41, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 116
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 22401092, guid: ba71a33494122e1448adf841a7ba2a41, type: 2}
       propertyPath: m_AnchorMin.x
@@ -330,6 +330,8 @@ MonoBehaviour:
   levelButton: {fileID: 11441178, guid: 7bf7695c303bd6a48babdc64067c920d, type: 2}
   gameScene: GameScene
   backScene: MenuScene
+  levelList: {fileID: 607532534}
+  backButton: {fileID: 261296294}
   columns: 4
   tapSFX: {fileID: 8300000, guid: bfd24eb59506e434caf1d17233c62841, type: 3}
 --- !u!4 &381459704

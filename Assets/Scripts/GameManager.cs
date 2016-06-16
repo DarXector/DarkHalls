@@ -17,7 +17,9 @@ public class GameManager : MonoBehaviour
     public string levelBack;
 
     // game performance
+    [HideInInspector]
     public float time = 0;
+    [HideInInspector]
     public float bestTime = 0;
 
     // UI elements to control
@@ -33,17 +35,28 @@ public class GameManager : MonoBehaviour
     private AstarPath _astar;
     public GameObject AStarObject;
 
+    [HideInInspector]
     public  GameObject enemy;
     private EnemyAI _enemyAI;
 
+    [HideInInspector]
     public GameObject player;
 
+    [HideInInspector]
     public GameObject screenFader;
-    public ScreenFader _screenFader;
+    private ScreenFader _screenFader;
 
+    [HideInInspector]
     public bool timerActive;
+    [HideInInspector]
     public bool playerCanMove;
+
     private float _timer;
+
+    public RectTransform backButton;
+    public RectTransform timeContainer;
+    public RectTransform phaseButton;
+    public RectTransform scanButton;
 
     // set things up here
     void Awake()
@@ -56,6 +69,24 @@ public class GameManager : MonoBehaviour
 
         // setup all the variables, the UI, and provide errors if things not setup properly.
         SetupDefaults();
+    }
+
+    void Start()
+    {
+        LeanTween.moveX(backButton, -600f, 0f);
+        LeanTween.moveX(timeContainer, 600f, 0f);
+        LeanTween.moveX(phaseButton, 600f, 0f);
+        LeanTween.moveX(scanButton, 600f, 0f);
+
+        AnimateIntro();
+    }
+
+    void AnimateIntro()
+    {
+        LeanTween.moveX(timeContainer, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
+        LeanTween.moveX(phaseButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f);
+        LeanTween.moveX(scanButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
+        LeanTween.moveX(backButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.8f);
     }
 
     // game loop
@@ -223,11 +254,21 @@ public class GameManager : MonoBehaviour
         UITime.text = "00:00";
     }
 
+    void AnimateOut()
+    {
+        LeanTween.moveX(timeContainer, 600f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
+        LeanTween.moveX(phaseButton, 600f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
+        LeanTween.moveX(scanButton, 600f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f);
+        LeanTween.moveX(backButton, -600f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
+    }
+
     // public function to remove player life and reset game accordingly
     public void ResetGame()
     {
         playerCanMove = false;
         timerActive = false;
+
+        AnimateOut();
 
         _screenFader.FadeTo(new Color(0.0f, 0.0f, 0.0f, 1.0f));
         StartCoroutine(LoadSameLevel());
@@ -237,6 +278,8 @@ public class GameManager : MonoBehaviour
     {
         playerCanMove = false;
         timerActive = false;
+
+        AnimateOut();
 
         _screenFader.FadeTo(new Color(0.0f, 0.0f, 0.0f, 1.0f));
         StartCoroutine(LoadLevelBack());
@@ -248,6 +291,8 @@ public class GameManager : MonoBehaviour
     {
         playerCanMove = false;
         timerActive = false;
+
+        AnimateOut();
 
         var model = GameModel.Instance;
 

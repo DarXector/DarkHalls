@@ -45,14 +45,14 @@ public class EndUIControl : MonoBehaviour
 
     void AnimateIntroButtons()
     {
-        LeanTween.moveX(yourTimeLabel, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
-        LeanTween.moveX(yourTimeContainer, 185f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
-        LeanTween.moveX(bestTimeLabel, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
-        LeanTween.moveX(bestTimeContainer, 185f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
-        LeanTween.moveX(leaderBoardButton, 30f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f);
-        LeanTween.moveX(replayButton, -60f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
-        LeanTween.moveX(nextButton, 30f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
-        LeanTween.moveX(backButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.8f);
+        LeanTween.moveX(yourTimeLabel, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
+        LeanTween.moveX(yourTimeContainer, 185f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
+        LeanTween.moveX(bestTimeLabel, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f);
+        LeanTween.moveX(bestTimeContainer, 185f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f);
+        LeanTween.moveX(leaderBoardButton, 30f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
+        LeanTween.moveX(replayButton, -60f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.8f);
+        LeanTween.moveX(nextButton, 30f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.8f);
+        LeanTween.moveX(backButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(1f);
     }
 
     void AnimateOutroButtons()

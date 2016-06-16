@@ -8,6 +8,7 @@ public class StartUIControl : MonoBehaviour {
     public RectTransform playButton;
     public RectTransform intructionsButton;
     public RectTransform quitButton;
+    public RectTransform authenticateButton;
 
     public AudioClip tapSFX;
     private AudioSource _audio;
@@ -28,6 +29,7 @@ public class StartUIControl : MonoBehaviour {
         LeanTween.moveX(playButton, -500f, 0f);
         LeanTween.moveX(intructionsButton, -500f, 0f);
         LeanTween.moveX(quitButton, -500f, 0f);
+        LeanTween.moveX(authenticateButton, -500f, 0f);
 
         if (GameModel.Instance.navigated)
         {
@@ -53,18 +55,25 @@ public class StartUIControl : MonoBehaviour {
         LeanTween.moveX(playButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
         LeanTween.moveX(intructionsButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
         LeanTween.moveX(quitButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f);
+        LeanTween.moveX(authenticateButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
     }
 
     void AnimateOutroButtons()
     {
         LeanTween.moveX(playButton, -500f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
         LeanTween.moveX(intructionsButton, -500f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
-        LeanTween.moveX(quitButton, -500f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f).onComplete += ChangeScene;
+        LeanTween.moveX(quitButton, -500f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f);
+        LeanTween.moveX(authenticateButton, -500f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f).onComplete += ChangeScene;
+    }
+
+    public void Authenticate()
+    {
+        LeanTween.moveX(authenticateButton, -500f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
+        GameModel.Instance.Authenticate();
     }
 
     void ChangeScene()
     {
-        
         SceneManager.LoadScene(_nextScene);
     }
 
