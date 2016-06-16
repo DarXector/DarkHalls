@@ -55,7 +55,12 @@ public class StartUIControl : MonoBehaviour {
         LeanTween.moveX(playButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
         LeanTween.moveX(intructionsButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
         LeanTween.moveX(quitButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f);
-        LeanTween.moveX(authenticateButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
+
+        if(!GameModel.Instance.gameData.authenticated)
+        {
+            LeanTween.moveX(authenticateButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
+        }
+        
     }
 
     void AnimateOutroButtons()

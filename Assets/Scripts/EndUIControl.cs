@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(AudioSource))]
 public class EndUIControl : MonoBehaviour
 {
     public RectTransform yourTimeLabel;
     public RectTransform yourTimeContainer;
+    public Text yourTimeText;
 
     public RectTransform bestTimeLabel;
     public RectTransform bestTimeContainer;
+    public Text bestTimeText;
 
     public RectTransform leaderBoardButton;
     public RectTransform replayButton;
@@ -31,6 +34,9 @@ public class EndUIControl : MonoBehaviour
 
     void Start ()
     {
+        yourTimeText.text = Utility.formatTime(GameModel.Instance.lastTime);
+        bestTimeText.text = Utility.formatTime(GameModel.Instance.currentLevel.bestTime);
+
         LeanTween.moveX(yourTimeLabel, -600f, 0f);
         LeanTween.moveX(yourTimeContainer, 600f, 0f);
         LeanTween.moveX(bestTimeLabel, -600f, 0f);

@@ -115,8 +115,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   yourTimeLabel: {fileID: 1981237438}
   yourTimeContainer: {fileID: 1997564996}
+  yourTimeText: {fileID: 1996678834}
   bestTimeLabel: {fileID: 974172386}
   bestTimeContainer: {fileID: 1222664092}
+  bestTimeText: {fileID: 1971382060}
   leaderBoardButton: {fileID: 811149397}
   replayButton: {fileID: 2034409877}
   nextButton: {fileID: 1164743884}
@@ -621,7 +623,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &811149397
 RectTransform:
   m_ObjectHideFlags: 0

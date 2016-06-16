@@ -28,6 +28,7 @@ public class GameModel : Singleton<GameModel>
     [HideInInspector]
     public bool navigated = false;
     private int _currentLevelIndex;
+    internal float lastTime;
 
     public void Start()
     {
@@ -177,6 +178,8 @@ public class GameModel : Singleton<GameModel>
 
                 if (gameData.version != dataFromAssets.version)
                 {
+                    dataFromAssets.authenticated = gameData.authenticated;
+
                     foreach (LevelData levelFromAssets in dataFromAssets.levels)
                     {
                         levelFromAssets.bestTime = gameData.levels[levelFromAssets.index].bestTime;
@@ -195,6 +198,13 @@ public class GameModel : Singleton<GameModel>
                 _currentLevelIndex = index;
                 OnLevelLoaded(gameData.levels[index]);
             }
+        }
+
+        Debug.Log("gameData authenticated " + gameData.authenticated);
+
+        if (gameData.authenticated)
+        {
+            Authenticate();
         }
     }
 
@@ -287,7 +297,7 @@ public class GameData
 {
     [SerializeField]
     public List<LevelData> levels = new List<LevelData>();
-    public string version = "0.0.2";
+    public string version = "0.0.3";
     public bool authenticated = false;
 }
 

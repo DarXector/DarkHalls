@@ -110,11 +110,7 @@ public class GameManager : MonoBehaviour
         if (timerActive)
         {
             _timer += Time.deltaTime;
-
-            string minutes = Mathf.Floor(_timer / 60).ToString("00");
-            string seconds = Mathf.Floor(_timer % 60).ToString("00");
-
-            UITime.text = minutes + ":" + seconds;
+            UITime.text = Utility.formatTime(_timer);
         }
     }
 
@@ -296,6 +292,7 @@ public class GameManager : MonoBehaviour
 
         var model = GameModel.Instance;
 
+        GameModel.Instance.lastTime = _timer;
         if (_timer < model.currentLevel.bestTime || model.currentLevel.bestTime == 0f)
         {
             GameModel.Instance.SaveTime(_timer);
