@@ -89,8 +89,8 @@ public class LevelControl : MonoBehaviour {
             int i = 0;
             foreach (LevelData level in _levels)
             {
-                var index = (int)Mathf.Floor(i / 16);
-                if (i % 16 == 0)
+                var index = (int)Mathf.Floor(i / 12);
+                if (i % 12 == 0)
                 {
                     GridLayoutGroup grid = _pages[index].GetComponent<GridLayoutGroup>();
                     grid.cellSize = new Vector2(buttonWidth, buttonWidth);

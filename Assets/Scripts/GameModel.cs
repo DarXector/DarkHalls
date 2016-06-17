@@ -131,6 +131,11 @@ public class GameModel : Singleton<GameModel>
 
         PostScore((int)(time * 1000), boardID);
 
+        SaveGameData();
+    }
+
+    void SaveGameData()
+    {
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Open(Application.persistentDataPath + "/levels.bytes", FileMode.Create);
 
@@ -230,22 +235,14 @@ public class GameModel : Singleton<GameModel>
                 authenticated = true;
                 gameData.authenticated = true;
 
-                BinaryFormatter bf = new BinaryFormatter();
-                FileStream file = File.Open(Application.persistentDataPath + "/levels.bytes", FileMode.Create);
-
-                try
-                {
-                    bf.Serialize(file, gameData);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogException(e, this);
-                    return;
-                }
+                SaveGameData();
             }
             else
             {
                 authenticated = false;
+                gameData.authenticated = false;
+
+                SaveGameData();
             }
         });
     }
