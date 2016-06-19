@@ -11,7 +11,7 @@ public class EnemySoundControl : MonoBehaviour {
 
     public delegate void AudioCallback();
 
-    public float roarTimeout = 5f;
+    public float roarTimeout = 10f;
     private float _timeAfterRoar = 0f;
 
     // Use this for initialization
@@ -46,6 +46,7 @@ public class EnemySoundControl : MonoBehaviour {
 
         _timeAfterRoar = 0f;
 
+        GameManager.gm.ShakeCamera();
         _audioSource.PlayOneShot(suddenRoar);
         StartCoroutine(DelayedCallback(suddenRoar.length, ReturnToLoop));
     }

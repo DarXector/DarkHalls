@@ -206,7 +206,15 @@ public class MazeGenerator : MonoBehaviour
                 switch(_maze[x,y])
                 {
                     case 1:
-                        tileWidth = SpawnWall(x, y, w, tileWidth);
+                        if(x == 0 || x == _width - 1 || y == 0 || y == _height - 1)
+                        {
+                            tileWidth = SpawnWall(x, y, w, tileWidth, true);
+                        }
+                        else
+                        {
+                            tileWidth = SpawnWall(x, y, w, tileWidth, false);
+                        }
+                            
                         break;
                     case 2:
                         SpawnPlayer(x, y);
@@ -256,11 +264,12 @@ public class MazeGenerator : MonoBehaviour
         player.transform.parent = gameObject.transform;
     }
 
-    float SpawnWall(int x, int y, GameObject w, float tileWidth)
+    float SpawnWall(int x, int y, GameObject w, float tileWidth, bool outer)
     {
         if (!w)
         {
             w = (GameObject)Instantiate(wallPrefab, new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+            w.tag = outer ? "OuterWall" : "Wall";
             w.transform.parent = gameObject.transform;
             tileWidth = tileSize;
         }

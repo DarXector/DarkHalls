@@ -14,8 +14,10 @@ public class LevelControl : MonoBehaviour {
 
     public RectTransform levelList;
     public RectTransform backButton;
+    public GameObject loadingText;
 
     public int columns = 4;
+    public int itemsPerPage = 12;
 
     private List<LevelData> _levels;
 
@@ -43,7 +45,7 @@ public class LevelControl : MonoBehaviour {
     {
         GameModel.Instance.navigated = true;
 
-        LeanTween.moveX(levelList, -800f, 0f);
+        LeanTween.moveY(levelList, -1280f, 0f);
         LeanTween.moveX(backButton, -600f, 0f);
 
         _elementsAdded = false;
@@ -54,18 +56,18 @@ public class LevelControl : MonoBehaviour {
 
         foreach (LevelData level in _levels)
         {
-            if (i % 16 == 0)
+            if (i % itemsPerPage == 0)
             {
                 var page = Pages.AddPageUsingTemplate();
                 page.gameObject.SetActive(true);
-                page.PageTitle = "Page_" + Mathf.Round(i / 16);
+                page.PageTitle = "Page_" + Mathf.Round(i / itemsPerPage);
                 _pages.Add(page);
             }
 
             i++;
         }
 
-        LeanTween.moveX(levelList, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
+        LeanTween.moveY(levelList, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
         LeanTween.moveX(backButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
     }
 
@@ -89,8 +91,9 @@ public class LevelControl : MonoBehaviour {
             int i = 0;
             foreach (LevelData level in _levels)
             {
-                var index = (int)Mathf.Floor(i / 12);
-                if (i % 12 == 0)
+                //Debug.Log("level " + level.index);
+                var index = (int)Mathf.Floor(i / itemsPerPage);
+                if (i % itemsPerPage == 0)
                 {
                     GridLayoutGroup grid = _pages[index].GetComponent<GridLayoutGroup>();
                     grid.cellSize = new Vector2(buttonWidth, buttonWidth);
@@ -110,13 +113,18 @@ public class LevelControl : MonoBehaviour {
 
     void ChangeScene()
     {
+        if(_nextScene == gameScene)
+        {
+            loadingText.SetActive(true);
+        }
+
         SceneManager.LoadScene(_nextScene);
     }
 
     void AnimateOutro()
     {
         _audio.PlayOneShot(tapSFX);
-        LeanTween.moveX(levelList, -800f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
+        LeanTween.moveY(levelList, -1280f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
         LeanTween.moveX(backButton, -600f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f).onComplete += ChangeScene;
     }
 

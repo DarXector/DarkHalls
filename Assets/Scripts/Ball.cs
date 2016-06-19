@@ -61,7 +61,7 @@ public class Ball : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if(collision.collider.tag == "Wall")
+        if(collision.collider.tag == "Wall" || collision.collider.tag == "OuterWall")
         {
             Vector3 normal = collision.contacts[0].normal;
             Vector3 vel = m_Rigidbody.velocity;

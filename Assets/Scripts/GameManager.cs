@@ -58,6 +58,8 @@ public class GameManager : MonoBehaviour
     public RectTransform phaseButton;
     public RectTransform scanButton;
 
+    public Camera mainCamera;
+
     // set things up here
     void Awake()
     {
@@ -116,9 +118,15 @@ public class GameManager : MonoBehaviour
 
     internal void ShowOuch()
     {
+        Vibration.Vibrate(300);
         playerCanMove = false;
         UIOuch.SetActive(true);
         StartCoroutine(HideOuch());
+    }
+
+    internal void ShakeCamera()
+    {
+        mainCamera.GetComponent<CameraShake>().StartShaking();
     }
 
     // load the nextLevel after delay
@@ -292,16 +300,16 @@ public class GameManager : MonoBehaviour
 
         var model = GameModel.Instance;
 
-        GameModel.Instance.lastTime = _timer;
+        model.lastTime = _timer;
         if (_timer < model.currentLevel.bestTime || model.currentLevel.bestTime == 0f)
         {
-            GameModel.Instance.SaveTime(_timer);
+            model.SaveTime(_timer);
         }
 
         _screenFader.FadeTo(new Color(1.0f, 1.0f, 1.0f, 1.0f));
         StartCoroutine(LoadNextScene());
 
-        GameModel.Instance.gameObject.GetComponent<AudioSource>().Play();
+        model.gameObject.GetComponent<AudioSource>().Play();
     }
 
     // load the nextLevel after delay

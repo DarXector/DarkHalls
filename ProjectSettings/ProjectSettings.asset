@@ -90,14 +90,14 @@ PlayerSettings:
     16:9: 0
     Others: 1
   bundleIdentifier: com.reesta.DarkHalls
-  bundleVersion: 0.1
+  bundleVersion: 0.3.3
   preloadedAssets: []
   metroEnableIndependentInputSource: 0
   metroEnableLowLatencyPresentationAPI: 0
   xboxOneDisableKinectGpuReservation: 0
   virtualRealitySupported: 0
   productGUID: d3768cd647e702544974965e7e7adde0
-  AndroidBundleVersionCode: 1
+  AndroidBundleVersionCode: 3
   AndroidMinSdkVersion: 16
   AndroidPreferredInstallLocation: 1
   aotOptions: 

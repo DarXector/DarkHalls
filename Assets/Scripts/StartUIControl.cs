@@ -44,8 +44,6 @@ public class StartUIControl : MonoBehaviour {
             LeanTween.moveY(logoGroup, -460, 0f);
             Invoke("AnimateIntro", 4f);
         }
-
-        
 	}
 
     void AnimateIntro()
@@ -78,6 +76,7 @@ public class StartUIControl : MonoBehaviour {
 
     public void Authenticate()
     {
+        _audio.PlayOneShot(tapSFX);
         LeanTween.moveX(authenticateButton, -600f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
         GameModel.Instance.Authenticate();
     }
@@ -89,24 +88,23 @@ public class StartUIControl : MonoBehaviour {
 
     public void LoadLevelSelect()
     {
+        _audio.PlayOneShot(tapSFX);
         _nextScene = levelSelectScene;
         AnimateOutroButtons();
-        _audio.PlayOneShot(tapSFX);
-
     }
 
     public void LoadInstructions()
     {
+        _audio.PlayOneShot(tapSFX);
         _nextScene = instructionsScene;
         AnimateOutroButtons();
-        _audio.PlayOneShot(tapSFX);
     }
 
     public void LoadCredits()
     {
+        _audio.PlayOneShot(tapSFX);
         _nextScene = creditsScene;
         AnimateOutroButtons();
-        _audio.PlayOneShot(tapSFX);
     }
 
     public void Quit()

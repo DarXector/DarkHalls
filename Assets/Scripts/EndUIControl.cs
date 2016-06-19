@@ -57,7 +57,12 @@ public class EndUIControl : MonoBehaviour
         LeanTween.moveX(bestTimeContainer, 185f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.4f);
         LeanTween.moveX(leaderBoardButton, 30f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
         LeanTween.moveX(replayButton, -60f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.8f);
-        LeanTween.moveX(nextButton, 30f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.8f);
+
+        if (GameModel.Instance.currentLevel.index < GameModel.Instance.gameData.levels.Count - 1)
+        {
+            LeanTween.moveX(nextButton, 30f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.8f);
+        }
+        
         LeanTween.moveX(backButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(1f);
     }
 

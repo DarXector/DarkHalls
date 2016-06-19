@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class SmoothFollow : MonoBehaviour
 {
 
     // The target we are following
     public Transform target;
+    private Transform releasedTarget;
 
     // The distance in the x-z plane to the target
     [SerializeField]
@@ -21,8 +23,8 @@ public class SmoothFollow : MonoBehaviour
 	// Use this for initialization
 	void Start() { }
 
-	// Update is called once per frame
-	void LateUpdate()
+    // Update is called once per frame
+    void LateUpdate()
 	{
 		// Early out if we don't have a target
 		if (!target)
@@ -55,4 +57,15 @@ public class SmoothFollow : MonoBehaviour
 		// Always look at the target
 		transform.LookAt(target);
 	}
+
+    internal void GetTarget()
+    {
+        target = releasedTarget;
+    }
+
+    internal void ReleaseTarget()
+    {
+        releasedTarget = target;
+        target = null;
+    }
 }

@@ -25,6 +25,14 @@ public class PhasePowerUp : MonoBehaviour
         }
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "OuterWall")
+        {
+            GetComponent<Collider>().isTrigger = false;
+        }
+    }
+
     private void _updateSoundVolume(float value)
     {
         if (_phaseSFX)
