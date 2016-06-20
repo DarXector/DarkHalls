@@ -73,7 +73,12 @@ public class LevelControl : MonoBehaviour {
 
     void Update()
     {
-        if(Screen.width <= 0f)
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GoBack();
+        }
+
+        if (Screen.width <= 0f)
         {
             return;
         }

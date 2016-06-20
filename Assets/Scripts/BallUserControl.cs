@@ -15,11 +15,18 @@ class BallUserControl : MonoBehaviour
     private Vector2 touchOrigin;
     private bool _mouseDown;
 
+    private RectTransform touchLine;
+    private RectTransform touchCircle;
+    private RectTransform touchArrow;
+
     private void Awake()
     {
         // Set up the reference.
         ball = GetComponent<Ball>();
 
+        touchLine = GameObject.Find("TouchLine").GetComponent<RectTransform>();
+        touchCircle = GameObject.Find("TouchCircle").GetComponent<RectTransform>();
+        touchArrow = GameObject.Find("TouchArrow").GetComponent<RectTransform>();
 
         // get the transform of the main camera
         if (Camera.main != null)
@@ -41,6 +48,8 @@ class BallUserControl : MonoBehaviour
 
         float h = CrossPlatformInputManager.GetAxis("Horizontal");
         float v = CrossPlatformInputManager.GetAxis("Vertical");
+
+        Vector2 touchEnd = Vector3.zero;
 
         if (Input.touchCount > 0)
         {
@@ -64,7 +73,7 @@ class BallUserControl : MonoBehaviour
             if (_mouseDown)
             {
                 //Set touchEnd to equal the position of this touch
-                Vector2 touchEnd = myTouch.position;
+                touchEnd = myTouch.position;
 
                 var move = GetRelativePosition(touchEnd);
 
@@ -89,7 +98,7 @@ class BallUserControl : MonoBehaviour
             if(_mouseDown)
             {
                 //Set touchEnd to equal the position of this touch
-                Vector2 touchEnd = Input.mousePosition;
+                touchEnd = Input.mousePosition;
 
                 var move = GetRelativePosition(touchEnd);
 
@@ -97,6 +106,19 @@ class BallUserControl : MonoBehaviour
                 h = move.h;
             }
 
+        }
+
+        if(_mouseDown && touchEnd != touchOrigin)
+        {
+            touchArrow.gameObject.SetActive(true);
+            touchLine.gameObject.SetActive(true);
+            touchCircle.gameObject.SetActive(true);
+        }
+        else
+        {
+            touchArrow.gameObject.SetActive(false);
+            touchLine.gameObject.SetActive(false);
+            touchCircle.gameObject.SetActive(false);
         }
 
         // calculate move direction
@@ -122,6 +144,16 @@ class BallUserControl : MonoBehaviour
 
         //Calculate the difference between the beginning and end of the touch on the y axis.
         float y = touchEnd.y - touchOrigin.y;
+
+        var v3 = touchEnd - touchOrigin;
+        touchLine.gameObject.transform.position = touchOrigin + v3 / 2;
+        touchLine.localScale = new Vector3(1, v3.magnitude / 142, 1);
+        touchLine.localRotation = Quaternion.FromToRotation(Vector3.up, v3);
+
+        touchCircle.gameObject.transform.position = touchEnd;
+
+        touchArrow.gameObject.transform.position = touchOrigin;
+        touchArrow.transform.rotation = Quaternion.FromToRotation(Vector3.up, v3);
 
         //Check if the difference along the x axis is greater than the difference along the y axis.
         h = x;

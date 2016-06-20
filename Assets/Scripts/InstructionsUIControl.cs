@@ -29,14 +29,20 @@ public class InstructionsUIControl : MonoBehaviour {
         LeanTween.moveX(backButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GoBack();
+        }
+    }
+
     public void GoBack()
     {
         _audio.PlayOneShot(tapSFX);
 
         LeanTween.moveX(instructions, -800f, 0.4f).setEase(LeanTweenType.easeInOutQuad);
         LeanTween.moveX(backButton, -600f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f).onComplete += ChangeScene;
-
-        
     }
 
     void ChangeScene()

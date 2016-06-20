@@ -97,16 +97,7 @@ public class GameManager : MonoBehaviour
         // if ESC pressed then pause the game
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (Time.timeScale > 0f)
-            {
-                UIGamePaused.SetActive(true); // this brings up the pause UI
-                Time.timeScale = 0f; // this pauses the game action
-            }
-            else
-            {
-                Time.timeScale = 1f; // this unpauses the game action (ie. back to normal)
-                UIGamePaused.SetActive(false); // remove the pause UI
-            }
+            Back();
         }
 
         if (timerActive)

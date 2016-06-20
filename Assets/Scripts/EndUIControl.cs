@@ -49,6 +49,14 @@ public class EndUIControl : MonoBehaviour
         AnimateIntroButtons();
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Back();
+        }
+    }
+
     void AnimateIntroButtons()
     {
         LeanTween.moveX(yourTimeLabel, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);

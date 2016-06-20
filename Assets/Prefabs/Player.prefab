@@ -234,7 +234,7 @@ Light:
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1.6
-  m_Range: 1.5
+  m_Range: 1.6
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
@@ -292,7 +292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a1e071a8414e7e47aa274d4d60e984b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MovePower: 1.6
+  m_MovePower: 1.8
   m_UseTorque: 0
   m_MaxAngularVelocity: 25
   m_JumpPower: 0

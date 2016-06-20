@@ -46,6 +46,14 @@ public class StartUIControl : MonoBehaviour {
         }
 	}
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Quit();
+        }
+    }
+
     void AnimateIntro()
     {
         LeanTween.moveY(logoGroup, 0, 0.4f).setEase(LeanTweenType.easeInOutQuad).onComplete += AnimateIntroButtons;
