@@ -332,7 +332,7 @@ MonoBehaviour:
   closestOnPathCheck: 1
   playerInSight: 0
   normalSpeed: 0.3
-  chaseSpeed: 0.4
+  chaseSpeed: 0.5
   chaseDistance: 1.5
 --- !u!143 &14369818
 CharacterController:

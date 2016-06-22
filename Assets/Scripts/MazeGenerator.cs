@@ -292,7 +292,13 @@ public class MazeGenerator : MonoBehaviour
 
     public Transform GetRandomNode()
     {
-        return navigationNodes.transform.GetChild(UnityEngine.Random.Range(0, navigationNodes.transform.childCount)).transform;
+        var node = navigationNodes.transform.GetChild(UnityEngine.Random.Range(0, navigationNodes.transform.childCount)).transform;
+        var difference = node.position - player.transform.position;
+        if (Mathf.Abs(difference.magnitude) < 3 )
+        {
+            node = GetRandomNode();
+        }
+        return node;
     }
 
     public void Parse(LevelData level)

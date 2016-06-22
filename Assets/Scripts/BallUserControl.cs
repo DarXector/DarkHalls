@@ -19,6 +19,8 @@ class BallUserControl : MonoBehaviour
     private RectTransform touchCircle;
     private RectTransform touchArrow;
 
+    private float worldToPixels;
+
     private void Awake()
     {
         // Set up the reference.
@@ -27,6 +29,8 @@ class BallUserControl : MonoBehaviour
         touchLine = GameObject.Find("TouchLine").GetComponent<RectTransform>();
         touchCircle = GameObject.Find("TouchCircle").GetComponent<RectTransform>();
         touchArrow = GameObject.Find("TouchArrow").GetComponent<RectTransform>();
+
+        worldToPixels = ((Screen.height / 2.0f) / Camera.main.orthographicSize);
 
         // get the transform of the main camera
         if (Camera.main != null)
@@ -126,7 +130,7 @@ class BallUserControl : MonoBehaviour
         {
             // calculate camera relative direction to move:
             camForward = Vector3.Scale(cam.forward, new Vector3(1, 0, 1)).normalized;
-            move = (v*camForward + h*cam.right).normalized;
+            move = (v*camForward + h*cam.right) / worldToPixels;
         }
         else
         {
@@ -147,7 +151,7 @@ class BallUserControl : MonoBehaviour
 
         var v3 = touchEnd - touchOrigin;
         touchLine.gameObject.transform.position = touchOrigin + v3 / 2;
-        touchLine.localScale = new Vector3(1, v3.magnitude / 142, 1);
+        touchLine.localScale = new Vector3(1, v3.magnitude / (284f * (Screen.height / 1280f)), 1);
         touchLine.localRotation = Quaternion.FromToRotation(Vector3.up, v3);
 
         touchCircle.gameObject.transform.position = touchEnd;

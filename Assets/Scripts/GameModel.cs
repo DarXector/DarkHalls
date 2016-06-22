@@ -412,7 +412,7 @@ public class GameData
 {
     [SerializeField]
     public List<LevelData> levels = new List<LevelData>();
-    public string version = "0.0.4";
+    public string version = "0.0.5";
     public bool authenticated = false;
 }
 
