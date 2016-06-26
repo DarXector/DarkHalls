@@ -69,6 +69,8 @@ public class GameManager : MonoBehaviour
 
         GameModel.Instance.gameObject.GetComponent<AudioSource>().Stop();
 
+        //Debug.Log("mainCamera.actualRenderingPath " + mainCamera.actualRenderingPath);
+
         // setup all the variables, the UI, and provide errors if things not setup properly.
         SetupDefaults();
     }

@@ -11,6 +11,7 @@ public class LevelControl : MonoBehaviour {
     public Button levelButton;
     public String gameScene;
     public String backScene;
+    public String instructionsScene;
 
     public RectTransform levelList;
     public RectTransform backButton;
@@ -30,6 +31,7 @@ public class LevelControl : MonoBehaviour {
     public static LevelControl instance;
 
     private string _nextScene;
+    private Page _currentPage;
 
     void Awake()
     {
@@ -68,7 +70,7 @@ public class LevelControl : MonoBehaviour {
         }
 
         LeanTween.moveY(levelList, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.2f);
-        LeanTween.moveX(backButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f);
+        LeanTween.moveX(backButton, 0f, 0.4f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.6f).onComplete += OnIntroComplete;
     }
 
     void Update()
@@ -90,19 +92,23 @@ public class LevelControl : MonoBehaviour {
             //Debug.Log("Screen.width " + Screen.width);
             _elementsAdded = true;
             var scale = Screen.width / 800f;
-            //Debug.Log("myRect " + myRect.rect.height + " : " + myRect.rect.width + " scale: " + scale);
+            Debug.Log("myRect " + myRect.rect.height + " : " + myRect.rect.width + " scale: " + scale);
             var buttonWidth = (myRect.rect.width - 32 * scale) / (float)columns; 
 
-            int i = 0;
+            for(var i = 0; i < _pages.Count; i++)
+            {
+                GridLayoutGroup grid = _pages[i].GetComponent<GridLayoutGroup>();
+                grid.cellSize = new Vector2(buttonWidth, buttonWidth);
+                grid.spacing = new Vector2(8 * scale, 8 * scale);
+            }
+
+            int j = 0;
             foreach (LevelData level in _levels)
             {
                 //Debug.Log("level " + level.index);
-                var index = (int)Mathf.Floor(i / itemsPerPage);
-                if (i % itemsPerPage == 0)
-                {
-                    GridLayoutGroup grid = _pages[index].GetComponent<GridLayoutGroup>();
-                    grid.cellSize = new Vector2(buttonWidth, buttonWidth);
-                    grid.spacing = new Vector2(8 * scale, 8 * scale);
+                var index = (int)Mathf.Floor(j / itemsPerPage);
+                if (j % itemsPerPage == 0)
+                { 
                     Pages.UpdatePagination();
                 }
 
@@ -110,10 +116,38 @@ public class LevelControl : MonoBehaviour {
                 button.transform.SetParent(_pages[index].transform, false);
                 button.GetComponent<LevelButton>().level = level;
 
-                i++;
+                j++;
             }
         }
+
         
+    }
+
+    void ToggleLayoutControls(Page page, bool enabled)
+    {
+        GridLayoutGroup grid = page.GetComponent<GridLayoutGroup>();
+        grid.enabled = enabled;
+        //LayoutElement element = page.GetComponent<LayoutElement>();
+        //element.enabled = enabled;
+    }
+
+    void OnIntroComplete()
+    {
+        Debug.Log("OnIntroComplete");
+        for (var i = 0; i < _pages.Count; i++)
+        {
+            ToggleLayoutControls(_pages[i], false);
+        }
+
+        _currentPage = Pages.GetCurrentPage();
+    }
+
+    public void OnPageChange(Vector2 vec)
+    {
+        //ToggleLayoutControls(_currentPage, false);
+        _currentPage = Pages.GetCurrentPage();
+        //ToggleLayoutControls(_currentPage, true);
+
     }
 
     void ChangeScene()
@@ -135,14 +169,18 @@ public class LevelControl : MonoBehaviour {
 
     public void GoBack()
     {
-        AnimateOutro();
         _nextScene = backScene;
+        AnimateOutro();
     }
 
     internal void StartGame(LevelData level)
     {
         GameModel.Instance.currentLevel = level;
+        _nextScene = GameModel.Instance.gameData.seenInstructions? gameScene : instructionsScene;
+        if(_nextScene == instructionsScene)
+        {
+            GameModel.Instance.instructionsBeforePlay = true;
+        }
         AnimateOutro();
-        _nextScene = gameScene;
     }
 }

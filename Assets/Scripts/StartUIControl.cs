@@ -105,6 +105,7 @@ public class StartUIControl : MonoBehaviour {
     {
         _audio.PlayOneShot(tapSFX);
         _nextScene = instructionsScene;
+        GameModel.Instance.instructionsBeforePlay = false;
         AnimateOutroButtons();
     }
 

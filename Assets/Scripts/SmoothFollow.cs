@@ -52,8 +52,8 @@ public class SmoothFollow : MonoBehaviour
 		transform.position -= currentRotation * Vector3.forward * distance;
 
         // Always look at the target
-        //transform.LookAt(target.position + 2 * Vector3.down);
-        transform.LookAt(target);
+        transform.LookAt(target.position + 2 * Vector3.down);
+        //transform.LookAt(target);
     }
 
     internal void GetTarget()

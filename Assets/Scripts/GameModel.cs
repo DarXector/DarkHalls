@@ -30,10 +30,12 @@ public class GameModel : Singleton<GameModel>
     private int _currentLevelIndex;
     internal float lastTime;
 
+    public bool instructionsBeforePlay = false;
+
     public void Start()
     {
         // recommended for debugging:
-        PlayGamesPlatform.DebugLogEnabled = true;
+        PlayGamesPlatform.DebugLogEnabled = false;
         // Activate the Google Play Games platform
         PlayGamesPlatform.Activate();
 
@@ -235,6 +237,12 @@ public class GameModel : Singleton<GameModel>
         SaveGameData();
     }
 
+    public void SetSeenInstructions()
+    {
+        gameData.seenInstructions = true;
+        SaveGameData();
+    }
+
     void SaveGameData()
     {
         BinaryFormatter bf = new BinaryFormatter();
@@ -287,6 +295,7 @@ public class GameModel : Singleton<GameModel>
                 if (gameData.version != dataFromAssets.version)
                 {
                     dataFromAssets.authenticated = gameData.authenticated;
+                    dataFromAssets.seenInstructions = gameData.seenInstructions;
 
                     foreach (LevelData levelFromAssets in dataFromAssets.levels)
                     {
@@ -414,6 +423,7 @@ public class GameData
     public List<LevelData> levels = new List<LevelData>();
     public string version = "0.0.5";
     public bool authenticated = false;
+    public bool seenInstructions = false;
 }
 
 [Serializable]
