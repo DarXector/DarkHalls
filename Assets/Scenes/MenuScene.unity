@@ -119,7 +119,7 @@ MonoBehaviour:
   quitButton: {fileID: 361531239}
   creditsButton: {fileID: 1363580940}
   authenticateButton: {fileID: 1544787445}
-  tapSFX: {fileID: 8300000, guid: bfd24eb59506e434caf1d17233c62841, type: 3}
+  tapSFX: {fileID: 8300000, guid: c0c937227a70dd74182ada233b82f4f6, type: 3}
   levelSelectScene: LevelScene
   instructionsScene: InstructionsScene
   creditsScene: CreditsScene
