@@ -268,8 +268,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ouchSounds:
-  - {fileID: 8300000, guid: b2ebb615c19828f449f016544a0cb712, type: 3}
-  - {fileID: 8300000, guid: bc5bc19ad665dc54890656fb5454ad1d, type: 3}
+  - {fileID: 8300000, guid: d16e36fd83d25e645b59b3234c399b5a, type: 3}
+  - {fileID: 8300000, guid: 3ca797a26cad82145b7014c1932ebe70, type: 3}
 --- !u!114 &11413026
 MonoBehaviour:
   m_ObjectHideFlags: 1

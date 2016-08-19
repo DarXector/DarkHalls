@@ -2462,7 +2462,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
 --- !u!114 &167373362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5649,7 +5649,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
 --- !u!1 &461144717
 GameObject:
   m_ObjectHideFlags: 0
@@ -6434,8 +6434,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ouchSounds:
-  - {fileID: 8300000, guid: b2ebb615c19828f449f016544a0cb712, type: 3}
-  - {fileID: 8300000, guid: bc5bc19ad665dc54890656fb5454ad1d, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!82 &612927835
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9146,7 +9146,7 @@ Transform:
   m_Children:
   - {fileID: 1085812460}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
 --- !u!1 &785084498
 GameObject:
   m_ObjectHideFlags: 0
@@ -9856,7 +9856,7 @@ RectTransform:
   - {fileID: 731814117}
   - {fileID: 915048962}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -15031,6 +15031,7 @@ MonoBehaviour:
   phaseButton: {fileID: 1321441660}
   scanButton: {fileID: 731814117}
   mainCamera: {fileID: 167373360}
+  tapSFX: {fileID: 8300000, guid: c0c937227a70dd74182ada233b82f4f6, type: 3}
 --- !u!4 &1299621827
 Transform:
   m_ObjectHideFlags: 0
@@ -15042,7 +15043,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
 --- !u!114 &1299621828
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15057,7 +15058,7 @@ MonoBehaviour:
   timeToScan: 3
   scanSpeed: 0.1
   waveWidth: 0.5
-  scanSFX: {fileID: 8300000, guid: 736ac3e1b5886314eb8d3296416ba4e9, type: 3}
+  scanSFX: {fileID: 8300000, guid: 66e69f8a63211704eb8b7bd5dc3b5678, type: 3}
 --- !u!82 &1299621829
 AudioSource:
   m_ObjectHideFlags: 0

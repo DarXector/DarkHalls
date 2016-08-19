@@ -369,7 +369,7 @@ GameObject:
   - 114: {fileID: 381459703}
   - 82: {fileID: 381459705}
   m_Layer: 0
-  m_Name: InstructionsControl
+  m_Name: CreditsControl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -387,9 +387,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backScene: MenuScene
-  tapSFX: {fileID: 8300000, guid: bfd24eb59506e434caf1d17233c62841, type: 3}
+  gameScene: 
+  tapSFX: {fileID: 8300000, guid: c0c937227a70dd74182ada233b82f4f6, type: 3}
   instructions: {fileID: 1420761587}
   backButton: {fileID: 261296294}
+  playButton: {fileID: 0}
 --- !u!4 &381459704
 Transform:
   m_ObjectHideFlags: 0
@@ -703,7 +705,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1431038959}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.73326606
+  m_Size: 0.7346648
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1227,7 +1229,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 239941014}
   m_HandleRect: {fileID: 239941013}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

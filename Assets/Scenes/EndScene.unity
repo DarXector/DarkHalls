@@ -123,7 +123,7 @@ MonoBehaviour:
   replayButton: {fileID: 2034409877}
   nextButton: {fileID: 1164743884}
   backButton: {fileID: 900291296}
-  tapSFX: {fileID: 8300000, guid: bfd24eb59506e434caf1d17233c62841, type: 3}
+  tapSFX: {fileID: 8300000, guid: c0c937227a70dd74182ada233b82f4f6, type: 3}
   gameScene: GameScene
   backScene: LevelScene
 --- !u!4 &38952680

@@ -266,8 +266,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c709685f0a20a9459746b8b138678dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  continuousGrowl: {fileID: 8300000, guid: 4cf83d3bc58322a459d9348f090b416d, type: 3}
-  suddenRoar: {fileID: 8300000, guid: 94fa6dc309bbb9e4e90fde3656609799, type: 3}
+  continuousGrowl: {fileID: 8300000, guid: 0fc865b2ed11a1b4a9ecfefc7b1278be, type: 3}
+  suddenRoar: {fileID: 8300000, guid: 38ae2d56928aeb4469b6c3d1f938b433, type: 3}
   roarTimeout: 5
 --- !u!114 &11430520
 MonoBehaviour:

@@ -469,7 +469,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   backScene: MenuScene
   gameScene: GameScene
-  tapSFX: {fileID: 8300000, guid: bfd24eb59506e434caf1d17233c62841, type: 3}
+  tapSFX: {fileID: 8300000, guid: c0c937227a70dd74182ada233b82f4f6, type: 3}
   instructions: {fileID: 1420761587}
   backButton: {fileID: 261296294}
   playButton: {fileID: 1874039501}
@@ -756,7 +756,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1431038959}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.6466225
+  m_Size: 0.6460944
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

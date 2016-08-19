@@ -60,6 +60,9 @@ public class GameManager : MonoBehaviour
 
     public Camera mainCamera;
 
+    public AudioClip tapSFX;
+    private AudioSource _audio;
+
     // set things up here
     void Awake()
     {
@@ -68,6 +71,8 @@ public class GameManager : MonoBehaviour
             gm = this.GetComponent<GameManager>();
 
         GameModel.Instance.gameObject.GetComponent<AudioSource>().Stop();
+
+        _audio = GetComponent<AudioSource>();
 
         //Debug.Log("mainCamera.actualRenderingPath " + mainCamera.actualRenderingPath);
 
@@ -275,6 +280,8 @@ public class GameManager : MonoBehaviour
     {
         playerCanMove = false;
         timerActive = false;
+
+        _audio.PlayOneShot(tapSFX);
 
         AnimateOut();
 
