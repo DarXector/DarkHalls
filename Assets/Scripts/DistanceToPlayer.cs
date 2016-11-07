@@ -6,13 +6,18 @@ public class DistanceToPlayer : MonoBehaviour {
     public float showDistance = 2f;
 
     private GameObject player;
-    private ShowHideEffect effect;
+
+    public ShowHideEffect effect;
 
     // Use this for initialization
     void Start ()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        effect = gameObject.transform.GetChild(0).gameObject.GetComponent<ShowHideEffect>();
+        if(!effect)
+        {
+            effect = gameObject.GetComponent<ShowHideEffect>();
+        }
+
         if (effect)
         {
             effect.Hide();
